@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="us">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>나만의 노하우 글쓰기</title>
+
+    <!--date range picker-->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+    <!--font-->
+    <link href="https://fonts.googleapis.com/css2?family=Sunflower:wght@300&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'Sunflower', sans-serif;
+            font-size: 13px;
+        }
+
+        .WritePost {
+            position: absolute;
+            top: 75%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 700px;
+            height: 1300px;
+        }
+
+        .title_wrap {
+            text-align: center;
+            padding-bottom: 80px;
+        }
+
+        .select_category {
+            float: right;
+        }
+
+        .Basic_info_wrap {
+            width: 650px;
+            height: 200px;
+            margin: auto;
+            margin-bottom: 30px;
+        }
+
+        .img {
+            position: relative;
+            bottom: 85px;
+            left: 30px;
+            border: 1px solid black;
+            display: inline-block;
+            width: 230px;
+            height: 160px;
+        }
+
+        .name_form {
+            position: relative;
+            top: 30px;
+            left: 70px;
+            display: inline-block;
+            width: 300px;
+            height: 130px;
+        }
+
+        .date_wrap {
+            width: 650px;
+            height: 100px;
+            margin: auto;
+        }
+
+        .start_date_info {
+            width: 150px;
+            height: 70px;
+            display: inline-block;
+            position: relative;
+            top: 20px;
+            left: 80px;
+        }
+
+        .end_date_info {
+            width: 150px;
+            height: 70px;
+            display: inline-block;
+            position: relative;
+            top: 20px;
+            left: 250px;
+        }
+
+        .prices_info_wrap {
+            width: 650px;
+            height: 100px;
+            margin: auto;
+            margin-bottom: 50px;
+        }
+
+        .prime_prices {
+            display: inline-block;
+            position: relative;
+            top: 20px;
+            left: 70px;
+        }
+
+        .sale_prices {
+            display: inline-block;
+            position: relative;
+            left: 140px;
+            top: 20px;
+        }
+
+        .arrow_img {
+            display: inline-block;
+            position: relative;
+            top: 5px;
+            left: 110px;
+            width: 70px;
+            height: 50px;
+        }
+
+        .detail_info_wrap {
+            width: 650px;
+            height: 100px;
+            margin: auto;
+        }
+
+        .detail_info_form {
+            width: 550px;
+            height: 280px;
+            margin: auto;
+        }
+
+        .button {
+            width: 100px;
+            height: 80px;
+            margin: auto;
+        }
+    </style>
+    <script>
+        function post() {
+            // let id = $("#").val()
+            // let img = $("#").val()
+            let brand_name = $("#brand_name").val()
+            let food_name = $("#food_name").val()
+            let prime_prices = $("#prime_prices").val()
+            let sale_prices = $("#sale_prices").val()
+            // let start_date = $("#start_date").val()
+            // let end_date = $("#end_date").val()
+            let know_how = $("#know_how").val()
+            let comment = $("#comment").val()
+
+            let s
+
+            $.ajax({
+                type: "POST",
+                url: "/post",
+                data: {
+                    brand_name_give: brand_name,
+                    food_name_give: food_name,
+                    prime_prices_give: prime_prices,
+                    sale_prices_give: sale_prices,
+                    // start_date_give: start_date,
+                    // end_date_give: end_date,
+                    know_how_give: know_how,
+                    comment_give: comment
+                },
+                success: function (response) {
+                    console.log(response["msg"]);
+                    // alert(response["msg"]);
+                    // window.location.reload()
+                }
+            })
+        }
+
+
+    </script>
+</head>
+
+<body>
+<form class="WritePost">
+    <div class="title_wrap">
+        <h2 class="title">나의 노하우 작성하기</h2>
+        <ul class="select_category">
+            <li>카테코리 선택</li>
+        </ul>
+    </div>
+    <section class="Basic_info_wrap">
+        <div class="img">
+            <img src=""
+                 alt="food_img">
+        </div>
+        <div class="name_form">
+            <label class="col-md-12" for="brand_name">상호명</label>
+            <div class="col-md-12">
+                <input id="brand_name" type="text" placeholder="상호명을 입력하세요."
+                       class="form-control input-md"> <!--required : 공백입력시 경고-->
+            </div>
+            <br> autofocus required
+            <label class="col-md-12" for="food_name">음식명</label>
+            <div class="col-md-12">
+                <input id="food_name" type="text" placeholder="음식명을 입력하세요."
+                       class="form-control input-md"> <!--required : 공백입력시 경고-->
+            </div>
+        </div>
+    </section>
+
+    <section class="date_wrap">
+        <div class="start_date_info">
+            <label class="col-md-12" for="prime_prices"> 할인 시작날짜</label>
+            <p><input type="date"></p>
+        </div>
+
+        <div class="end_date_info">
+            <label class="col-md-12" for="prime_prices">끝나는 날짜</label>
+            <p><input type="date"></p>
+        </div>
+
+    </section>
+
+    <section class="prices_info_wrap">
+        <div class="prime_prices">
+            <label class="col-md-12" for="prime_prices">정가</label>
+            <div class="col-md-12">
+                <input id="prime_prices" type="number" placeholder="정가"
+                       class="form-control input-md"> <!--required : 공백입력시 경고-->
+            </div>
+        </div>
+        <div class=" arrow_img">
+            <img src="../static/arrow.png" alt="arrow_img" width="60px" height="50px">
+        </div>
+        <div class="sale_prices">
+            <label class="col-md-12" for="sale_prices">할인된 가격</label>
+            <div class="col-md-12">
+                <input id="sale_prices" type="number" placeholder="할인된 가격"
+                       class="form-control input-md"> <!--required : 공백입력시 경고-->
+            </div>
+        </div>
+    </section>
+    <section class="detail_info_wrap">
+        <div class="detail_info_form">
+            <label class="col-md-12" for="know_how">할인받는 방법</label>
+            <div class="col-md-12">
+                        <textarea class="form-control" id="know_how" placeholder="할인받는 방법(20자 이내로 간단하게 작성해주세요)"
+                                  style="height:100px;"></textarea> <br>
+            </div>
+            <label class="col-md-12" for="comment">comment</label>
+            <div class="col-md-12">
+                        <textarea class="form-control" id="comment" placeholder="comment(20자 이내로 간단하게 작성해주세요)"
+                                  style="height:100px;"></textarea>
+            </div>
+            <!-- Button -->
+            <div class="button">
+                <label class="col-md-12 control-label" for="resister"></label>
+                <div class="col-md-12">
+                    <input id="resister" class="btn btn-primary" type="submit"
+                           onclick="post()" value="등록하기">
+                </div>
+            </div>
+        </div>
+    </section>
+</form>
+
+</body>
+</html>
