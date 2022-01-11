@@ -40,10 +40,7 @@ def login2():
     msg = request.args.get("msg")
     return render_template('login2.html', msg=msg)
 
-@app.route('/agree')
-def agree():
-    msg = request.args.get("msg")
-    return render_template('agree.html', msg=msg)
+
 
 
 @app.route('/user/<username>')

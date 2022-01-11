@@ -103,20 +103,7 @@
 
         function sign_up() {
 
-            let input_email_value1= document.getElementById("email1").value;
-            let input_email_value2= document.getElementById("email2").value;
 
-            let email_address =input_email_value1 +"@"+input_email_value2
-            let email_address_check = email_address.split('@')[1]
-            console.log(email_address)
-            if (email_address == "@") {
-                alert("이메일을 확인해 주세요")
-                return;
-            }
-            if (email_address_check == "") {
-                alert("이메일을 확인해 주세요")
-                return;
-            }
 
             let username = $("#input-username").val()
             let password = $("#input-password").val()
@@ -155,6 +142,21 @@
                 $("#help-password2").text("비밀번호가 일치합니다.").removeClass("is-danger").addClass("is-success")
             }
 
+
+            let input_email_value1= document.getElementById("email1").value;
+            let input_email_value2= document.getElementById("email2").value;
+
+            let email_address =input_email_value1 +"@"+input_email_value2
+            let email_address_check = email_address.split('@')[1]
+            console.log(email_address)
+            if (email_address == "@") {
+                alert("이메일을 확인해 주세요")
+                return;
+            }
+            if (email_address_check == "") {
+                alert("이메일을 확인해 주세요")
+                return;
+            }
 
 
             let agree_cheeck1 = localStorage.getItem('agree1')
@@ -329,9 +331,6 @@
         </div>
     </div>
 </section>
-
-
-
 
 </body>
 </html>
