@@ -1,0 +1,164 @@
+ *{margin:0;padding:0;font:inherit;color:inherit;}
+        *, :after, :before {box-sizing:border-box;flex-shrink:0;}
+        :root {-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;text-size-adjust:100%;cursor:default;line-height:1.5;overflow-wrap:break-word;-moz-tab-size:4;tab-size:4}
+        html, body {height:100%;}
+        img, picture, video, canvas, svg {display: block;max-width:100%;}
+        button {background:none;border:0;cursor:pointer;}
+        a {text-decoration:none}
+        table {border-collapse:collapse;border-spacing:0}
+        .container {
+            width: 1000px;
+            margin: 0 auto;
+        }
+        .login {
+            text-align: right;
+            padding-top: 40px;
+            margin-bottom: 20px;
+        }
+        .filter_dish {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .dish {
+            text-align: center;
+            border: 1px solid black;
+            padding: 10px 100px;
+            margin-right: 20px;
+        }
+        .dish:last-child(4){
+            margin-right: 0;
+        }
+        .filter_rank {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 60px;
+        }
+        .rank {
+            border: 1px solid black;
+            padding: 30px 20px;
+            border-radius: 50%;
+            margin-right: 140px;
+        }
+        .rank:nth-of-type(3){
+            margin-right: 0;
+        }
+        .rank_list {
+            border-top: 1px solid black;
+            padding: 10px 30px;
+        }
+        .rank_item {
+            display: flex;
+            position: relative;
+            align-items: center;
+            border-bottom: 1px solid gray;
+            padding: 20px 0;
+        }
+        .rank_item:last-child{
+            margin-bottom: 150px;
+        }
+        .rank_item_number {
+            width: 40px;
+            height: 40px;
+            background: yellow;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 20px;
+        }
+        .rank_item_img {
+            width: 100px;
+            height: 100px;
+            margin-right: 30px;
+        }
+        .rank_item_content {
+            width: 480px;
+            margin-right: 30px;
+        }
+        .rank_item_title {
+            display: flex;
+        }
+        .dishName {
+            flex: 1;
+            font-weight: 600;
+            font-size: 20px;
+        }
+        .rank_item_comment {
+            margin-bottom: 8px;
+        }
+        .rank_item_knowhow {
+            margin-bottom: 10px;
+        }
+        .reviewButton {
+            width: 10%;
+            border-radius: 8px;
+        }
+        .rank_item_sub {
+            width: 240px;
+        }
+        .rank_item_expires {
+            font-size: 14px;
+            text-align: right;
+            margin-bottom: 8px;
+        }
+        .expires_text {
+            font-weight: bold;
+        }
+        .rank_item_priceTag {
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .rank_item_priceTag > span:nth-of-type(2){
+            padding-left: 18px;
+        }
+        .right_item_price {
+            display: flex;
+        }
+        .right_item_price > div {
+            width: 30%;
+            margin-right: 5%;
+            border: 1px solid black;
+            border-radius: 8px;
+        }
+        .right_item_price > div:nth-of-type(3){
+            margin-right: 0;
+        }
+        .sale_rate,
+        .sale_price,
+        .sale_like {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .before_price {
+            text-decoration: line-through;
+        }
+        .current_price {
+            font-weight: bold;
+        }
+        .selected {
+            background: yellow;
+        }
+        button {
+            background: cornflowerblue;
+        }
+        .modify_button {
+            display: block;
+            padding: 0 8px;
+            margin-left: auto;
+            border-radius: 8px;
+        }
+        .write button {
+            padding: 6px 12px;
+            background: black;
+            color: white;
+            display: block;
+            margin-left: auto;
+        }
+        img {
+            width: 100%;
+            height: 100%;
+        }
