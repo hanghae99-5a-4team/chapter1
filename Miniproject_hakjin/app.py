@@ -1,7 +1,7 @@
 from flask import Flask, render_template, jsonify, request
 
 from pymongo import MongoClient
-client = MongoClient('mongodb://test:test@localhost', 27017)
+client = MongoClient('localhost', 27017)
 db = client.team4
 
 app = Flask(__name__)
@@ -46,7 +46,7 @@ def posting():
         'know_how' : know_how_receive,
         'comment' : comment_receive
     }
-    # db.post1.insert_one(doc)  #카테고리마다 post 다르게 설정해야함
+    db.post1.insert_one(doc)  #카테고리마다 post 다르게 설정해야함
     return jsonify({'msg':'게시글 등록이 완료되었습니다!'})
 
 
