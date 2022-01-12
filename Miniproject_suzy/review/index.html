@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <meta charset="UTF-8">
+<!--    <script src="{{ url_for('static', filename='js/index.js') }}"></script>-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <title>{{title}}</title>
+    <style>
+
+        /* Dropdown Button */
+        .dropbtn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 16px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .dropbtn:hover, .dropbtn:focus {
+            background-color: #3e8e41;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            overflow: auto;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            width: 130%;
+            height: 240px;
+        }
+
+        .dropdown-content p {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            /*width:300px;*/
+        }
+
+        .dropdown a:hover {
+            background-color: #f1f1f1;
+            width: 100%;
+        }
+
+        .review_table {
+            color: black;
+            font-size: 10px;
+        }
+
+        .review_wrap1 {
+            padding: 10px;
+            width: 10%;
+        }
+
+        .show {
+            display: block;
+        }
+
+        /*height: 430%;*/
+        .review_text {
+            width: 340px;
+            height: 50px;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        .review_id {
+            width: 110px;
+            position: absolute;
+            left: 56%;
+            top: 6%;
+        }
+
+        .review_date {
+            position: absolute;
+            left: 72%;
+            top: 6%;
+            width: 12%;
+        }
+
+        .review_modify {
+            position: absolute;
+            left: 86%;
+            top: 9%;
+            width: 5%;
+        }
+
+        .review_del {
+            position: absolute;
+            left: 92%;
+            top: 9%;
+            width: 5%;
+        }
+
+        .review_wrap2 {
+
+        }
+
+        .review_input {
+            position: absolute;
+            left: 3%;
+            bottom: 3%;
+            width: 72%;
+            height: 30px;
+            font-size: 16px;
+        }
+
+        .review_submit {
+            position: absolute;
+            right: 3%;
+            bottom: 3%;
+            width: 20%;
+            height: 30px;
+            font-size: 16px;
+        }
+
+        /*  *************/
+        .re_text {
+            /*position: absolute;*/
+            /*top: 75%;*/
+            /*left: 20%*/
+            /*margin-top: 10px;*/
+        }
+
+        .re_id {
+            position: absolute;
+            top: 75%;
+            left: 55%;
+        }
+
+        .re_date {
+            position: absolute;
+            top: 75%;
+            left: 65%;
+        }
+
+        .re_modify {
+            position: absolute;
+            top: 75%;
+            left: 73%;
+        }
+
+        .re_del {
+            position: absolute;
+            top: 75%;
+            left: 78%;
+        }
+
+        .re_input {
+            position: absolute;
+            top: 88%;
+            left: 20%;
+            width: 40%;
+        }
+
+        .re_submit {
+            position: absolute;
+            top: 88%;
+            left: 77%;
+        }
+
+
+    </style>
+    <script>
+        // /* review dropdown */
+
+        function myFunction() {
+            // var view_list =
+            document.getElementById("myDropdown").classList.toggle("show");
+
+        }
+
+        // // Close the dropdown menu if the user clicks outside of it
+        // window.onclick = function (event) {
+        //     if (!event.target.matches('.dropbtn')) {
+        //         var dropdowns = document.getElementsByClassName("dropdown-content");
+        //         var i;
+        //         for (i = 0; i < dropdowns.length; i++) {
+        //             var openDropdown = dropdowns[i];
+        //             if (openDropdown.classList.contains('show')) {
+        //                 openDropdown.classList.remove('show');
+        //             }
+        //         }
+        //     }
+        // }
+
+
+    </script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+                showReview();  // 로딩되자마자 showReview()부른다
+            });
+
+            function makeReview() {
+                //1. jQuery로 값을 가져온다
+                let content = $('.re_input').val()
+
+                //2. ajax에 실어서 보내준다
+                $.ajax({
+                    type: "POST",
+                    url: "/review",
+                    data: {re_input_give:content  },
+                    success: function (response) {
+                        alert(response["msg"]);
+                        window.location.reload();
+                    }
+                })
+            }
+
+            function showReview() {
+                // $('.re_wrap').empty()
+                $.ajax({
+                    type: "GET",
+                    url: "/review",
+                    data: {},
+                    success: function (response) {
+                        let reviews = response['all_reviews']
+                        for (let i = 0; i < reviews.length; i++) {
+                            let content = reviews[i]['content']
+
+                            let temp_html = `<div class="re_wrap1">
+                                                <p class="re_text" >${content}</p>
+                                                <p class="re_id">아이디자리</p>
+                                                <p class="re_date">날짜자리</p>
+                                                <div class="re_wrap2">
+                                                    <input type="button" class="re_modify" value="수정">
+                                                    <input type="button" class="re_del" value="삭제">
+                                                </div>
+                                            </div>`
+                            $('.re_wrap').append(temp_html)       // .re_wrap에 붙여준다
+                        }
+                    }
+                })
+            }
+
+        $(document).ready(function () {
+            clock();
+            setInterval(clock, 1000);
+        });
+
+        function clock() {
+            let clockYear = moment().format('YYYY.MM.DD');
+            let clockSeconds = moment().format('HH:mm:ss');
+            $('.re_date').text(clockYear);
+            $('#clock-seconds').text(clockSeconds);
+        }
+
+
+
+
+    </script>
+
+</head>
+<body>
+<div class="container">
+    <header>
+        <div class="login">
+            <span>로그인</span>
+        </div>
+
+
+
+<!--   현재시간     -->
+        <span id="nowtime"></span>
+
+
+
+
+        <div class="dishs">
+            <span class="dish">한식</span>
+            <span class="dish">중식</span>
+            <span class="dish">일식</span>
+            <span class="dish">양식</span>
+        </div>
+        <div class="filters">
+            <span class="filter">최신순</span>
+            <span class="filter">인기순</span>
+            <span class="filter">할인순</span>
+        </div>
+    </header>
+    <main>
+        <div class="list">
+            <div class="item">
+                <div class="number">1</div>
+                <div class="left">
+                    <img src="" alt="img사진">
+                </div>
+                <div class="middle">
+                    <div class="middle_top">
+                        <div class="dishName">글레이즈 도넛</div>
+                        <div>
+                            <span class="timerange">유통기한:</span>
+                            <span class="start">1월 10일</span>
+                            <span>~</span>
+                            <span class="last">1월 21일</span>
+                        </div>
+                    </div>
+                    <div class="middle_middle">
+                        너무너무너무너무너무너무너무너무너무너무너무너무 맛있는 맛있는
+                        글레이즈 도넛 글레이즈 도넛
+                    </div>
+
+ <!--       드롭다운 리뷰         -->
+<!--                    <button class=reviewButton onclick="myFunction('first')" id="first">리뷰</button>-->
+                    <div class="btn-group dropdown show">
+                        <button onclick="myFunction()" class="dropbtn">리뷰
+                            <div id="myDropdown" class="dropdown-content">
+                                <div class="review_wrap">
+                                    <div class="review_wrap1">
+<!--                                        <p class="review_text" href="#home">리뷰텍스트</p>-->
+<!--                                        <p class="review_id">아이디자리</p>-->
+<!--                                        <p class="review_date">날짜자리</p>-->
+<!--                                    <div class="review_wrap2">-->
+<!--                                        <input type="button" class="review_modify" value="수정">-->
+<!--                                        <input type="button" class="review_del" value="삭제">-->
+                                    </div>
+                                    </div>
+                                    <div class="review_wrap3">
+                                        <input type="text" class="review_input">
+                                        <input onclick="makeReview()" type="button" class="review_submit" value="등록">
+                                    </div>
+
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+
+
+                </div>
+                <div class="right">
+                    <div class="priceTag">
+                        <span>할인율</span>
+                        <span>할인가격</span>
+                        <span>좋아요 수</span>
+                    </div>
+                    <div class="right_flex">
+                        <div class="right_left">
+                            <div>
+                                30%
+                            </div>
+                        </div>
+                        <div class="right_middle">
+                            <div>
+                                <div class="lineThrough">8000원</div>
+                                <div class="화살표"></div>
+                                <div class="thick">6000원</div>
+                            </div>
+                        </div>
+                        <div class="right_right">
+                            <div>
+                                <div><i class="fa fa-thumbs-up"></i></div>
+                                <div>30</div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="modify_button">수정</button>
+                </div>
+            </div>
+
+            <div class="item">
+                <div class="number">2</div>
+                <div class="left">
+                    <img src="">
+                </div>
+                <div class="middle">
+                    <div class="middle_top">
+                        <div class="dishName">산타 도넛</div>
+                        <div>
+                            <span class="timerange">유통기한:</span>
+                            <span class="start">1월 10일</span>
+                            <span>~</span>
+                            <span class="last">1월 21일</span>
+                        </div>
+                    </div>
+                    <div class="middle_middle">
+                        너무너무너무너무너무너무너무너무너무너무너무너무 맛있는
+                    </div>
+                    <button class=reviewButton onclick="myFunction('second')" id="review_second">리뷰</button>
+                </div>
+                <div class="right">
+                    <div class="priceTag">
+                        <span>할인율</span>
+                        <span>할인가격</span>
+                        <span>좋아요 수</span>
+                    </div>
+                    <div class="right_flex">
+                        <div class="right_left">
+                            <div>
+                                30%
+                            </div>
+                        </div>
+                        <div class="right_middle">
+                            <div>
+                                <div class="lineThrough">8000원</div>
+                                <div class="화살표"></div>
+                                <div class="thick">6000원</div>
+                            </div>
+                        </div>
+                        <div class="right_right">
+                            <div>
+                                <div><i class="fa fa-thumbs-up"></i></div>
+                                <div>30</div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="modify_button">수정</button>
+                </div>
+            </div>
+
+
+            <!--   리뷰 보기,쓰기         -->
+            <div class="re_wrap">
+                <div class="re_wrap1">
+
+                </div>
+                <div class="re_wrap3">
+                    <input type="text" class="re_input">
+                    <input onclick="makeReview()" type="button" class="re_submit" value="등록">
+                </div>
+            </div>
+
+
+        </div>
+    </main>
+</div>
+</body>
+</html>
