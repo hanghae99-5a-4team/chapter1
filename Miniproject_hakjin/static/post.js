@@ -8,7 +8,10 @@ let dateChange = () => {
 // 게시글 작성
 function post() {
     // let id = $("#").val()
-    let img = $("#img").val()
+    //img 주소가 fakepath 형식을 들어와서 변환해줌
+    let filePath = $("#img").val()
+    let filePathSplit = filePath.split('\\')
+    let img = filePathSplit[2]
     let brand_name = $("#brand_name").val()
     let food_name = $("#food_name").val()
     let prime_prices = $("#prime_prices").val()
@@ -17,6 +20,7 @@ function post() {
     let end_date = $("#date2").val()
     let know_how = $("#know_how").val()
     let comment = $("#comment").val()
+    let category = $("#category").val()
 
     $.ajax({
         type: "POST",
@@ -30,7 +34,8 @@ function post() {
             start_date_give: start_date,
             end_date_give: end_date,
             know_how_give: know_how,
-            comment_give: comment
+            comment_give: comment,
+            category_give: category
         },
         success: function (response) {
             console.log(response["msg"]);
@@ -83,8 +88,8 @@ function previewImage(targetObj, View_area) {
             img.id = "prev_" + View_area;
             img.classList.add("obj");
             img.file = file;
-            img.style.width = '100px';
-            img.style.height = '100px';
+            img.style.width = '150px';
+            img.style.height = '120px';
             preview.appendChild(img);
             if (window.FileReader) { // FireFox, Chrome, Opera 확인.
                 var reader = new FileReader();

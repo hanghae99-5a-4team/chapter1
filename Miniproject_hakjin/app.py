@@ -32,6 +32,7 @@ def posting():
     end_date_receive = request.form['end_date_give']
     know_how_receive = request.form['know_how_give']
     comment_receive = request.form['comment_give']
+    category = request.form['category_give']
 
     doc = {
         # 'id' : id_receive,
@@ -45,10 +46,18 @@ def posting():
         'know_how' : know_how_receive,
         'comment' : comment_receive
     }
-    db.post1.insert_one(doc)  #카테고리마다 post 다르게 설정해야함s
     print("hi")
+    # 카테고리마다 다른 db에 저장 1:한식, 2:중식, 3:일식, 4:양식
+    if category == 1:
+        db.post1.insert_one(doc)
+    elif category == 2:
+        db.post2.insert_one(doc)
+    elif category == 3:
+        db.post3.insert_one(doc)
+    else :
+        db.post4.insert_one(doc)
+    print("hello")
     return jsonify({'msg':'노하우 등록이 완료되었습니다!'})
-
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
