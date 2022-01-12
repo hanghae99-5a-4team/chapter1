@@ -3,8 +3,8 @@ import jwt
 import datetime
 import hashlib
 from flask import Flask, render_template, jsonify, request, redirect, url_for
-from werkzeug.utils import secure_filename
 from datetime import datetime, timedelta
+from werkzeug.utils import secure_filename
 
 
 app = Flask(__name__)
@@ -14,7 +14,7 @@ app.config['UPLOAD_FOLDER'] = "./static/profile_pics"
 SECRET_KEY = 'SPARTA'
 
 client = MongoClient('localhost', 27017)
-db = client.dbsparta_plus_week4
+db = client.tema4
 
 
 @app.route('/')
@@ -23,11 +23,42 @@ def home():
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         user_info = db.users.find_one({"username": payload["id"]})
-        return render_template('index.html', user_info=user_info)
+        return render_template('index.html', user_info=user_info,title='sale_site')
     except jwt.ExpiredSignatureError:
         return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
     except jwt.exceptions.DecodeError:
         return redirect(url_for("login", msg="로그인 정보가 존재하지 않습니다."))
+
+
+@app.route('/api/foodlist', methods=['GET'])
+def getDish():
+    dish_receive = request.args.get('dish_give')
+    if dish_receive == '한식':
+        koreanfoods = list(db.post1.find({}))
+        for koreanfood in koreanfoods:
+            koreanfood["_id"] = str(koreanfood["_id"])
+        return jsonify({'koreanfoods': koreanfoods})
+    if dish_receive == '중식':
+        chinafoods = list(db.post2.find({}))
+        for chinafood in chinafoods:
+            chinafood["_id"] = str(chinafood["_id"])
+        return jsonify({'chinafoods': chinafoods})
+
+
+@app.route('/api/updatelike', methods=['PATCH'])
+def updateLike():
+    filter_list = request.form['filter_give']
+    name = request.form['name_give']
+    like = request.form['like_give']
+    print(filter_list, name, like)
+
+    if  filter_list == '한식':
+        db.post1.update_one({"food_name":name}, {"$set": {"like": str(int(like)+1)}})
+        return jsonify({'result': 'success'})
+
+    if  filter_list == '중식':
+        db.post2.update_one({"food_name":name}, {"$set": {"like": str(int(like)+1)}})
+        return jsonify({'result': 'success'})
 
 
 @app.route('/login')
@@ -40,21 +71,15 @@ def login2():
     msg = request.args.get("msg")
     return render_template('login2.html', msg=msg)
 
+@app.route('/detail')
+def detail():
+    return render_template('detail.html')
 
 
+@app.route('/postpage')
+def postpage():
+    return render_template('post.html')
 
-@app.route('/user/<username>')
-def user(username):
-    # 각 사용자의 프로필과 글을 모아볼 수 있는 공간
-    token_receive = request.cookies.get('mytoken')
-    try:
-        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        status = (username == payload["id"])  # 내 프로필이면 True, 다른 사람 프로필 페이지면 False
-
-        user_info = db.users.find_one({"username": username}, {"_id": False})
-        return render_template('user.html', user_info=user_info, status=status)
-    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
-        return redirect(url_for("home"))
 
 
 @app.route('/sign_in', methods=['POST'])
@@ -109,27 +134,63 @@ def check_dup():
     return jsonify({'result': 'success', 'exists': exists})
 
 
-@app.route('/update_profile', methods=['POST'])
-def save_img():
+
+
+@app.route('/post', methods=['POST'])
+def post():
     token_receive = request.cookies.get('mytoken')
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        # 프로필 업데이트
-        return jsonify({"result": "success", 'msg': '프로필을 업데이트했습니다.'})
+        user_info = db.users.find_one({"username": payload["id"]})
+
+        brand_name_receive = request.form['brand_name_give']
+        food_name_receive = request.form['food_name_give']
+        prime_prices_receive = request.form['prime_prices_give']
+        sale_prices_receive = request.form['sale_prices_give']
+        start_date_receive = request.form['start_date_give']
+        end_date_receive = request.form['end_date_give']
+        know_how_receive = request.form['know_how_give']
+        comment_receive = request.form['comment_give']
+        category = request.form['category_give']
+
+        doc = {
+            "username": user_info["username"],
+            'brand_name': brand_name_receive,
+            'food_name': food_name_receive,
+            'prime_prices': prime_prices_receive,
+            'sale_prices': sale_prices_receive,
+            'start_date': start_date_receive,
+            'end_date': end_date_receive,
+            'know_how': know_how_receive,
+            'comment': comment_receive,
+            'like': 0
+        }
+
+        username = user_info["username"]
+        food_name = food_name_receive
+        if 'img_give' in request.files:
+            file = request.files["img_give"]
+            filename = secure_filename(file.filename)
+            extension = filename.split(".")[-1]
+            file_path = f"img_pics/{username}_{food_name}.{extension}"
+            file.save("./static/"+file_path)
+            doc["img"] = filename
+            doc["img_path"] = file_path
+
+        # 카테고리마다 다른 db에 저장 1:한식, 2:중식, 3:일식, 4:양식
+        if category == "한식":
+            db.post1.insert_one(doc)
+        elif category == "중식":
+            db.post2.insert_one(doc)
+        elif category == "일식":
+            db.post3.insert_one(doc)
+        else:
+            db.post4.insert_one(doc)
+
+        print("hello")
+        return jsonify({'msg': '노하우 등록이 완료되었습니다!'})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("home"))
-
-
-@app.route('/posting', methods=['POST'])
-def posting():
-    token_receive = request.cookies.get('mytoken')
-    try:
-        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        # 포스팅하기
-        return jsonify({"result": "success", 'msg': '포스팅 성공'})
-    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
-        return redirect(url_for("home"))
-
 
 @app.route("/get_posts", methods=['GET'])
 def get_posts():
@@ -151,6 +212,22 @@ def update_like():
         return jsonify({"result": "success", 'msg': 'updated'})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("home"))
+
+
+
+@app.route('/user/<username>')
+def user(username):
+    # 각 사용자의 프로필과 글을 모아볼 수 있는 공간
+    token_receive = request.cookies.get('mytoken')
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        status = (username == payload["id"])  # 내 프로필이면 True, 다른 사람 프로필 페이지면 False
+
+        user_info = db.users.find_one({"username": username}, {"_id": False})
+        return render_template('post.html', user_info=user_info, status=status)
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("home"))
+
 
 
 if __name__ == '__main__':

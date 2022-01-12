@@ -1,3 +1,11 @@
+ *{margin:0;padding:0;font:inherit;color:inherit;}
+        *, :after, :before {box-sizing:border-box;flex-shrink:0;}
+        :root {-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;text-size-adjust:100%;cursor:default;line-height:1.5;overflow-wrap:break-word;-moz-tab-size:4;tab-size:4}
+        html, body {height:100%;}
+        img, picture, video, canvas, svg {display: block;max-width:100%;}
+        button {background:none;border:0;cursor:pointer;}
+        a {text-decoration:none}
+        table {border-collapse:collapse;border-spacing:0}
 * {
     font-family: 'Sunflower', sans-serif;
     font-size: 13px;
@@ -5,7 +13,7 @@
 
 .WritePost {
     position: absolute;
-    top: 60%;
+    top: 550px;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 700px;
@@ -19,6 +27,7 @@
 
 .select_category {
     float: right;
+    font-size: 9px;
 }
 
 .Basic_info_wrap {
@@ -28,9 +37,9 @@
     margin-bottom: 30px;
 }
 
-.img {
+.img_wrap {
     position: relative;
-    bottom: 85px;
+    bottom: 80px;
     left: 30px;
     border: 1px solid black;
     display: inline-block;
@@ -51,6 +60,8 @@
     width: 650px;
     height: 100px;
     margin: auto;
+    margin-bottom: -30px;
+
 }
 
 .start_date_info {
@@ -82,20 +93,20 @@
     display: inline-block;
     position: relative;
     top: 20px;
-    left: 70px;
+    left: 63px;
 }
 
 .sale_prices {
     display: inline-block;
     position: relative;
-    left: 140px;
+    left: 134px;
     top: 20px;
 }
 
 .arrow_img {
     display: inline-block;
     position: relative;
-    top: 5px;
+    top: 45px;
     left: 110px;
     width: 70px;
     height: 50px;
