@@ -13,7 +13,7 @@
 
 .WritePost {
     position: absolute;
-    top: 75%;
+    top: 550px;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 700px;
@@ -27,6 +27,7 @@
 
 .select_category {
     float: right;
+    font-size: 9px;
 }
 
 .Basic_info_wrap {
@@ -36,9 +37,9 @@
     margin-bottom: 30px;
 }
 
-.img {
+.img_wrap {
     position: relative;
-    bottom: 85px;
+    bottom: 80px;
     left: 30px;
     border: 1px solid black;
     display: inline-block;
@@ -59,6 +60,8 @@
     width: 650px;
     height: 100px;
     margin: auto;
+    margin-bottom: -30px;
+
 }
 
 .start_date_info {
@@ -90,20 +93,20 @@
     display: inline-block;
     position: relative;
     top: 20px;
-    left: 70px;
+    left: 63px;
 }
 
 .sale_prices {
     display: inline-block;
     position: relative;
-    left: 140px;
+    left: 134px;
     top: 20px;
 }
 
 .arrow_img {
     display: inline-block;
     position: relative;
-    top: 5px;
+    top: 45px;
     left: 110px;
     width: 70px;
     height: 50px;

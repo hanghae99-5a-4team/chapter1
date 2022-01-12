@@ -30,39 +30,46 @@
 <form class="WritePost">
     <div class="title_wrap">
         <h2 class="title">나의 노하우 작성하기</h2>
-        <ul class="select_category">
-            <li>카테코리 선택</li>
-        </ul>
+        <div class="select_category">
+            <select class="custom-select" id="category">
+                <option selected>-음식 카테고리-</option>
+                <option value="1">한식</option>
+                <option value="2">중식</option>
+                <option value="3">일식</option>
+                <option value="4">양식</option>
+            </select>
+        </div>
     </div>
     <section class="Basic_info_wrap">
-        <div class="img">
-            <img src=""
-                 alt="food_img">
+        <div class="img_wrap">
+            <input type="file" name="img" id="img" onchange="previewImage(this,'View_area')">
+            <div id='View_area'
+                 style='position:absolute; width: 230px; height: 160px;'>
+            </div>
         </div>
         <div class="name_form">
             <label class="col-md-12" for="brand_name">상호명</label>
             <div class="col-md-12">
                 <input id="brand_name" type="text" placeholder="상호명을 입력하세요."
-                       class="form-control input-md"> <!--required : 공백입력시 경고-->
+                       class="form-control input-md" autofocus required> <!--required : 공백입력시 경고-->
             </div>
-            <br> autofocus required
+            <br>
             <label class="col-md-12" for="food_name">음식명</label>
             <div class="col-md-12">
                 <input id="food_name" type="text" placeholder="음식명을 입력하세요."
-                       class="form-control input-md"> <!--required : 공백입력시 경고-->
+                       class="form-control input-md" autofocus required>
             </div>
         </div>
     </section>
 
     <section class="date_wrap">
         <div class="start_date_info">
-            <label class="col-md-12" for="prime_prices"> 할인 시작날짜</label>
-            <p><input type="date"></p>
+            <p>할인 시작 날짜</p>
+            <input type="date" id="date1" autofocus required onchange="dateChange();"/>
         </div>
-
         <div class="end_date_info">
-            <label class="col-md-12" for="prime_prices">끝나는 날짜</label>
-            <p><input type="date"></p>
+            <p>끝나는 날짜</p>
+            <input type="date" id="date2" autofocus required onchange="dateChange();"/>
         </div>
 
     </section>
@@ -72,7 +79,7 @@
             <label class="col-md-12" for="prime_prices">정가</label>
             <div class="col-md-12">
                 <input id="prime_prices" type="number" placeholder="정가"
-                       class="form-control input-md"> <!--required : 공백입력시 경고-->
+                       class="form-control input-md" autofocus required>
             </div>
         </div>
         <div class=" arrow_img">
@@ -82,7 +89,7 @@
             <label class="col-md-12" for="sale_prices">할인된 가격</label>
             <div class="col-md-12">
                 <input id="sale_prices" type="number" placeholder="할인된 가격"
-                       class="form-control input-md"> <!--required : 공백입력시 경고-->
+                       class="form-control input-md" autofocus required>
             </div>
         </div>
     </section>
@@ -91,12 +98,12 @@
             <label class="col-md-12" for="know_how">할인받는 방법</label>
             <div class="col-md-12">
                         <textarea class="form-control" id="know_how" placeholder="할인받는 방법(20자 이내로 간단하게 작성해주세요)"
-                                  style="height:100px;"></textarea> <br>
+                                  style="height:100px;" autofocus required></textarea> <br>
             </div>
             <label class="col-md-12" for="comment">comment</label>
             <div class="col-md-12">
                         <textarea class="form-control" id="comment" placeholder="comment(20자 이내로 간단하게 작성해주세요)"
-                                  style="height:100px;"></textarea>
+                                  style="height:100px;" autofocus required></textarea>
             </div>
             <!-- Button -->
             <div class="button">
