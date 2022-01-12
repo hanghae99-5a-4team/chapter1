@@ -44,19 +44,20 @@ def posting():
         'start_date' : start_date_receive,
         'end_date' : end_date_receive,
         'know_how' : know_how_receive,
-        'comment' : comment_receive
+        'comment' : comment_receive,
+        'like' : 0
     }
     print("hi")
-    # 카테고리마다 다른 db에 저장 1:한식, 2:중식, 3:일식, 4:양식
-    if category == 1:
+    # 카테고리마다 다른 db에 저장
+    if category == "한식":
         db.post1.insert_one(doc)
-    elif category == 2:
+    elif category == "중식":
         db.post2.insert_one(doc)
-    elif category == 3:
+    elif category == "일식":
         db.post3.insert_one(doc)
     else :
         db.post4.insert_one(doc)
-    print("hello")
+    print(category)
     return jsonify({'msg':'노하우 등록이 완료되었습니다!'})
 
 if __name__ == '__main__':
