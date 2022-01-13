@@ -36,7 +36,7 @@
 -   Framework: Flask
 -   Database: MongoDB
 -   View : HTML5, CSS3, Javascript
--   Tool : Git, Notion
+-   Tool : JWT, Git, Notion
 
 <br/>
 <br/>
