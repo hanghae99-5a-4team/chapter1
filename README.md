@@ -12,9 +12,13 @@
 
 <br/>
 
+##사이트 메인
+![사이트메인](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbCxJDi%2FbtrqHEQ9Sv8%2Frz3BKt8UCJcrIIgbmwdIDK%2Fimg.png)
+
+
 ## 🎬 시연영상
 
-![시연영상](<iframe width="1280" height="720" src="https://www.youtube.com/embed/CONNv4jAvXM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>)
+👉 https://youtu.be/CONNv4jAvXM
 
 <br/>
 <br/>
