@@ -19,7 +19,14 @@
 
 ## 🎨 프로젝트 초안
 
+👉🏻 로그인 파트
+https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FXkmHW%2FbtrqCTBXlrO%2F6GD9AAkN4K9GyBYA7uwBc1%2Fimg.png
 
+👉🏻 메인  리스트 파트 
+https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FuQCtX%2FbtrqHdTDg6x%2FAHc1NEAM1llKfHv5K7ky8K%2Fimg.png
+
+👉🏻 게시글 작성 파트
+https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbq78vM%2FbtrqFptKOrv%2FZKSBkzKP2nsddtu53jLWY0%2Fimg.png
 <br/>
 <br/>
 
