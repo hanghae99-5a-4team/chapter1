@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+    <!-- Webpage Title -->
+    <title>Log In | SWEETER</title>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <!-- Font Awesome CSS -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Gowun+Batang&display=swap" rel="stylesheet">
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+    <style>
+        .agree {
+            display: block;
+            margin: auto;
+            /*border: solid 1px gray;*/
+            padding: 30px;
+            width: 500px;
+            height: 550px;
+        }
+
+        .agree_title {
+            font-size:30px;
+        }
+
+        #join_process {
+            color: red;
+        }
+
+        .title_wrap {
+            text-align: center;
+            height: 70px;
+        }
+
+
+        .agree_line {
+            border-top: 7px double black;
+        }
+
+        .agree_text {
+            font-size: small;
+        }
+
+        .must_wrap {
+            margin-top: 5px;
+        }
+
+        .text_detail {
+            border: 1px solid black;
+            width: 95%;
+            height: 70px;
+            padding: 10px;
+            font-size:3px;
+        }
+
+        .move_join, .move_join2 {
+            display: inline-block;
+            margin: auto;
+        }
+
+        .move_join2 {
+            margin-left:15px;
+        }
+
+        .step_wrap{
+            display:block;
+            font-size:13px;
+            margin:auto;
+        }
+        #box_property {
+            border: 1px solid;
+            box-sizing: border-box;
+            background-color : gainsboro;
+            box-radius : 5px;
+            width:550px;
+            height:650px;
+            margin:30px auto 0px auto;
+            padding:30px;
+        }
+        body {
+            {#background-color: rgb(143,188,143);#}
+            background: url("https://previews.123rf.com/images/houbacze/houbacze1607/houbacze160700156/59666889-%EB%B9%A8%EA%B0%84%EC%83%89-%EB%B2%A1%ED%84%B0-%ED%8F%89%EB%A9%B4-%EB%B2%A1%ED%84%B0-%EB%B0%B0%EA%B2%BD%EC%9D%B4-%EB%B0%A9%EB%B2%95%EC%9D%84-%EC%95%8C%EA%B3%A0-%EB%B0%A9%EB%B2%95-%EB%85%B8%ED%95%98%EC%9A%B0-%EB%85%B8%ED%95%98%EC%9A%B0-%EC%95%8C%EA%B3%A0.jpg") no-repeat center;
+            min-height: 100vh;
+        }
+
+        .section {
+            padding: 1rem 1.5rem;
+            max-width: 750px;
+            margin: auto;
+        }
+
+        .title {
+            font-weight: 800;
+            font-size: 5rem;
+            font-family: 'Do Hyeon', sans-serif;
+
+        }
+
+        .subtitle {
+            font-size: 2rem;
+            font-family: 'Gowun Batang', serif;
+        }
+
+        .is-sparta {
+            color: #FFD228 !important;
+        }
+
+        .button.is-sparta {
+            background-color: #e8344e;
+            border-color: transparent;
+            color: #fff !important;
+        }
+
+        .button.is-sparta.is-outlined {
+            background-color: transparent;
+            border-color: #e8344e;
+            color: #e8344e !important;
+        }
+
+    </style>
+    <script>
+        //로그인 버튼 누를 시 작동 함수
+        function sign_in() {
+            let username = $("#input-username").val()
+            let password = $("#input-password").val()
+            //유저 네임이 공란일 시에 아이디 입력해달라는 문구를 표현
+            if (username == "") {
+                $("#help-id-login").text("아이디를 입력해주세요.")
+                $("#input-username").focus()
+                return;
+            } else {
+                $("#help-id-login").text("")
+            }
+            //패스워드가 공란일 시에 패스워드 입력해달라는 문구를 표현
+            if (password == "") {
+                $("#help-password-login").text("비밀번호를 입력해주세요.")
+                $("#input-password").focus()
+                return;
+            } else {
+                $("#help-password-login").text("")
+            }
+
+            //ajax 기능을 통해 유저네임과 패스워드를 서버에 전달하여 성공 시 서버가 주는 토큰 값을 받음
+            $.ajax({
+                type: "POST",
+                url: "/sign_in",
+                data: {
+                    username_give: username,
+                    password_give: password
+                },
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        $.cookie('mytoken', response['token'], {path: '/'});
+                        // 토큰 받은 후 메인페이지로 가게됌됌
+                       window.location.replace("/")
+                    } else {
+                        alert(response['msg'])
+                    }
+                }
+            });
+        }
+        //약관동의 전체 체크박스 클릭 시 체크박스 전부 체크되는 함수
+        function selectAll(selectAll) {
+            const checkboxes
+                = document.getElementsByName('agree_button');
+
+            checkboxes.forEach((checkbox) => {
+                checkbox.checked = selectAll.checked;
+            })
+        }
+
+        // 체크 박스 체크 값을 받아 저장하는 함수->회원가입 페이지에서 이 값을 받아 회원가입 시 같이 db 저장하기위함
+        function check_button_check() {
+            agree_cheeck1 = $("input:checkbox[id='agree_1']").is(":checked")
+            agree_cheeck2 = $("input:checkbox[id='agree_2']").is(":checked")
+            agree_cheeck3 = $("input:checkbox[id='agree_3']").is(":checked")
+
+            // console.log(agree_cheeck1,agree_cheeck2)
+
+            if (agree_cheeck1 == true && agree_cheeck2 == true) {
+
+                // 체크 박스 체크 값을 agree1,agree2,agree3이라는 키에 true, false 값을 담음, 회원가입 페이지에서 부를 예정
+                if (agree_cheeck3 == true){
+                    localStorage.setItem('agree1','true');
+                    localStorage.setItem('agree2','true');
+                    localStorage.setItem('agree3','true');
+                }
+                else {
+                    localStorage.setItem('agree1','true');
+                    localStorage.setItem('agree2','true');
+                    localStorage.setItem('agree3','false');
+                }
+                // 회원가입 페이지로 이동
+                window.location.href = '/login2'
+            // 필수 버튼이 2개 안눌렸을 경우 체크 알람 띄움
+            } else {
+                alert("필수 버튼을 체크해주시기 바랍니다.")
+            }
+        }
+
+    </script>
+</head>
+
+<body>
+{#페이지 상단 배너#}
+<section class="hero is-white">
+    <div class="hero-body has-text-centered" style="padding-bottom:1rem;margin:auto;">
+        <img src="static/knowhow.png" width="250" height="250" alt="항해 5기 4조">
+        <h1 class="title is-sparta">나만의 할인 노하우</h1>
+        <h3 class="subtitle is-sparta"> &nbsp&nbsp&nbsp Show me the know-how!</h3>
+    </div>
+</section>
+
+{#로그인 박스#}
+<section class="section">
+    <div class="container">
+        <div class="box" style="max-width: 480px;margin:auto">
+            <article class="media">
+                <div class="media-content">
+                    <div class="content">
+                        <div class="field has-addons">
+                            <div class="control has-icons-left" style="width:100%">
+                                <input id="input-username" class="input" type="text" placeholder="아이디">
+                                <span class="icon is-small is-left"><i class="fa fa-user"></i></span>
+                            </div>
+                        </div>
+
+
+                        <div class="field">
+                            <div class="control has-icons-left">
+                                <input id="input-password" class="input" type="password" placeholder="비밀번호">
+                                <span class="icon is-small is-left"><i class="fa fa-lock"></i></span>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div id="div-sign-in-or-up" class="has-text-centered">
+                        <nav class="level is-mobile" id="login_button">
+                            <button class="level-item button is-sparta " onclick="sign_in()">로그인</button>
+
+                        </nav>
+                        <hr>
+                        <h4 class="mb-3">아직 회원이 아니라면</h4>
+                        <nav class="level is-mobile">
+                            {#회원가입 버튼, 누를시 id="box_property 를 찾아 is-active 클래스를 추가함#}
+                            <button class="level-item button is-sparta is-outlined"
+                                    onclick='$("#box_property").addClass("is-active")'>회원가입하기
+                            </button>
+                        </nav>
+                    </div>
+
+                </div>
+            </article>
+        </div>
+    </div>
+</section>
+
+{#약관 동의 박스, class로 modal을 넣어서 기본 숨김으로 하고 회원가입 버튼 누를 시 is-active 클래스가 붙어서 활성화 됌 #}
+<div class="box modal" id="box_property" >
+    <form class="agree" >
+        <div class="step_wrap">
+            <span id="join_process"> 1. 약관동의 &nbsp;</span>
+            <span> 2. 정보입력 &nbsp;</span>
+            <span> 3. 가입완료 &nbsp;</span>
+        </div>
+        <div class="title_wrap">
+            <hr>
+            <h1 class="agree_title">약관 동의 페이지</h1>
+        </div>
+
+        <hr class="agree_line">
+        <div class="must_wrap">
+            <p><input type='checkbox' name='agree_button' onclick='selectAll(this)'/> <b>전체 약관에 동의하십니까?</b>
+            <p><input type='checkbox' name='agree_button' value="agree_value_1" id="agree_1"/>
+            <span class="agree_text">(필수) 사용자 정보 제공에 동의하십니까? </span> </p>
+            <p class="text_detail">제 1 조 (목적)
+                1. 본 약관은 기업마당 사이트가 제공하는 모든 서비스(이하 "서비스")의 이용조건 및 절차,
+                이용자와 기업마당 사이트의 권리, 의무, 책임사항과 기타 필요한 사항을 규정함을 목적으로 합니다.</p>
+
+        </div>
+        <div classs="must_wrap">
+            <p><input type='checkbox' name='agree_button' value="agree_value_2" id="agree_2"/> <span class="agree_text"> (필수) 사용자 정보 제공에 동의하십니까? </span>
+            </p>
+            <p class="text_detail">항해 5기 4조는 「개인정보보호법」 제15조제1항제1호, 제17조제1항제1호, 제23조제1호, 제24조제1항 제1호에 따라
+                아래와 같이 개인정보의 수집. 이용에 관하여 귀하의 동의를 얻고자 합니다.</p>
+        </div>
+        <div class="must_wrap">
+            <p><input type='checkbox' name='agree_button'id="agree_3"/> <span class="agree_text" > (선택) 사용자 정보 제공에 동의하십니까? </span></p>
+            <p class="text_detail">1. 개인정보의 수집 및 이용 목적 신규 서비스 개발 및 마케팅ㆍ광고에의 활용
+                                    - 신규 서비스 개발, 이벤트 및 광고성 정보 제공 및 참여기회 제공, 접속 빈도 등 회원의 서비스 이용에 대한 통계</p>
+        </div>
+    </form>
+    <div>
+        {#회원가입 버튼, 누를시 필수체크 확인하는 함수 호출하여 문제 없을 시 회원가입 페이지로 넘어감#}
+        <button class="move_join" type="submit" onclick="check_button_check()">회원가입 이동</button>
+        {#취소 버튼, 누를시 id="box_property 를 찾아 is-active를 지워서 modal 기능으로 인해 약관동의 숨겨짐#}
+        <button class="move_join2" type="submit" onclick='$("#box_property").removeClass("is-active")'>취소</button>
+    </div>
+
+</div>
+
+</body>
+</html>
