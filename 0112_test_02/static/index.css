@@ -10,10 +10,11 @@
             width: 1000px;
             margin: 0 auto;
         }
-        .login {
+        .logout {
             text-align: right;
             padding-top: 40px;
             margin-bottom: 20px;
+            cursor: pointer;
         }
         .filter_dish {
             display: flex;
@@ -146,10 +147,20 @@
             background: cornflowerblue;
         }
         .modify_button {
-            display: block;
+            display: inline-block;
             padding: 0 8px;
             margin-left: auto;
             border-radius: 8px;
+        }
+        .delete_button {
+            display: inline-block;
+            padding: 0 8px;
+            margin-left: auto;
+            border-radius: 8px;
+            margin-left: 8px;
+        }
+        .button_container {
+            text-align: right;
         }
         .write button {
             padding: 6px 12px;
@@ -161,4 +172,66 @@
         img {
             width: 100%;
             height: 100%;
+        }
+        .review {
+            padding-top: 20px;
+        }
+        .review h1 {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .review_list {
+            padding: 0 20px;
+            max-height: 240px;
+            overflow: auto;
+        }
+        .review_list{ -ms-overflow-style: none; }
+        .review_list::-webkit-scrollbar{ display:none; }
+        .review_item {
+            padding: 10px;
+            position: relative;
+        }
+        .review_item > span:nth-of-type(1) {
+            font-weight: bold;
+            margin-right: 7px;
+        }
+        .buttonContainer {
+            position: absolute;
+            right: 0;
+        }
+        .review_item button {
+            border-radius: 4px;
+            background: whitesmoke;
+            border: 1px solid black;
+            padding: 2px;
+        }
+        .review form {
+            padding: 0 30px;
+        }
+        .review form input{
+            width: 101%;
+            height: 40px;
+            margin-bottom: 16px;
+        }
+        .review form input:focus {
+            outline: none;
+        }
+        form button {
+            display: block;
+            margin: 0 auto;
+            padding: 10px;
+            border-radius: 4px;
+            background: aliceblue;
+            border: 1px solid black;
+        }
+        .remove {
+            display: none;
+        }
+        .created {
+            position: absolute;
+            right: 85px;
+            top: 25px;
+            font-weight: bold;
+            font-size: 12px;
         }
