@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{title}}</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="../static/index.js"></script>-
+
+    <link rel="stylesheet" href="../static/index.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <script>
+
+        const deleteCookie = function(name) {
+            document.cookie = name + '=; expires=Thu, 01 Jan 1999 00:00:10 GMT;domain=localhost;path=/;';
+        }
+        function logout(){
+            deleteCookie('mytoken')
+            window.location.href ='/';
+
+        }
+    </script>
+</head>
+
+<body>
+<div class="container">
+    <header>
+        <div class="login">
+            <a onclick="logout()">
+                로그아웃
+            </a>
+        </div>
+        <div class="filter_dish">
+            <span class="dish" onclick="filterDish('한식')">한식</span>
+            <span class="dish" onclick="filterDish('중식')">중식</span>
+            <span class="dish" onclick="filterDish('일식')">일식</span>
+            <span class="dish" onclick="filterDish('양식')">양식</span>
+        </div>
+        <div class="filter_rank">
+            <span class="rank" onclick="filterRank('최저가')">최저가</span>
+            <span class="rank" onclick="filterRank('인기순')">인기순</span>
+            <span class="rank" onclick="filterRank('할인순')">할인순</span>
+        </div>
+        <div class="write">
+            <button><a href="/post">등록</a></button>
+        </div>
+    </header>
+    <main>
+        <div class="rank_list">
+        </div>
+    </main>
+</div>
+</body>
+</html>
