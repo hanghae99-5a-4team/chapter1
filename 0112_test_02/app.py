@@ -13,12 +13,14 @@ app.config['UPLOAD_FOLDER'] = "./static/profile_pics"
 
 SECRET_KEY = 'SPARTA'
 
+#client = MongoClient('mongodb://test:test@localhost', 27017)
 client = MongoClient('localhost', 27017)
 db = client.tema4
 
-
+# 로그인 후 메인페이지로 가는 함수, 토큰이 없을 시 login 페이지로 보내짐
 @app.route('/')
 def home():
+    # 로그인 시 보내준 토큰을 확인
     token_receive = request.cookies.get('mytoken')
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
@@ -60,38 +62,37 @@ def updateLike():
         db.post2.update_one({"food_name":name}, {"$set": {"like": str(int(like)+1)}})
         return jsonify({'result': 'success'})
 
-
+# 로그인 페이지로 가는 함수
 @app.route('/login')
 def login():
     msg = request.args.get("msg")
     return render_template('login.html', msg=msg)
 
+# 회원가입 페이지로 가는 함수
 @app.route('/login2')
 def login2():
     msg = request.args.get("msg")
     return render_template('login2.html', msg=msg)
 
-@app.route('/detail')
-def detail():
-    return render_template('detail.html')
-
-
+# 포스트 페이지로 가는 함수
 @app.route('/postpage')
 def postpage():
     return render_template('post.html')
 
 
-
+# 로그인 시 유저네임과 패스워드를 받아 확인하는 함수
 @app.route('/sign_in', methods=['POST'])
 def sign_in():
-    # 로그인
+    # 로그인 유저네임과 패스워드 확인
     username_receive = request.form['username_give']
     password_receive = request.form['password_give']
-
+    # 패스워드는 sha256 해시함수를 통해 암호화 하여 저장함
     pw_hash = hashlib.sha256(password_receive.encode('utf-8')).hexdigest()
     result = db.users.find_one({'username': username_receive, 'password': pw_hash})
 
+    # 유저네임과 패스워드를 db에서 찾아서 있으면 토큰을 보내주는 조건문
     if result is not None:
+        # 토큰에는 유저네임과 토큰의 유지 시간 정보를 넣음
         payload = {
          'id': username_receive,
          'exp': datetime.utcnow() + timedelta(seconds=60 * 60 * 24)  # 로그인 24시간 유지
@@ -103,7 +104,7 @@ def sign_in():
     else:
         return jsonify({'result': 'fail', 'msg': '아이디/비밀번호가 일치하지 않습니다.'})
 
-
+# 회원가입 함수로 유저의 정보를 받아 DB에 저장
 @app.route('/sign_up/save', methods=['POST'])
 def sign_up():
     username_receive = request.form['username_give']
@@ -113,23 +114,24 @@ def sign_up():
     agree_give_receive_3 = request.form['agree_give_3']
     email_give_receive = request.form['email_give']
 
-
+    # 패스워드는 sha256 해시함수를 통해 암호화 하여 저장함
     password_hash = hashlib.sha256(password_receive.encode('utf-8')).hexdigest()
     doc = {
         "username": username_receive,                               # 아이디
         "password": password_hash,                                  # 비밀번호
-        "agree_give_1": agree_give_receive_1,                       # 프로필 이름 기본값은 아이디
-        "agree_give_2": agree_give_receive_2,                        # 프로필 사진 파일 이름
-        "agree_give_3": agree_give_receive_3,                   # 프로필 사진 기본 이미지
-        "email_address": email_give_receive                               # 프로필 한 마디
+        "agree_give_1": agree_give_receive_1,                       # 약관동의 필수1 체크상황
+        "agree_give_2": agree_give_receive_2,                       # 약관동의 필수2 체크상황
+        "agree_give_3": agree_give_receive_3,                       # 약관동의 선택1 체크상황
+        "email_address": email_give_receive                         # 이메일 주소
     }
     db.users.insert_one(doc)
     return jsonify({'result': 'success'})
 
-
+# 회원가입 시 유저 네임 중복체크 함수
 @app.route('/sign_up/check_dup', methods=['POST'])
 def check_dup():
     username_receive = request.form['username_give']
+    # 유저 네임 받아서 DB속에 동일 네임이 있으면 true 아니면 false 반환
     exists = bool(db.users.find_one({"username": username_receive}))
     return jsonify({'result': 'success', 'exists': exists})
 
@@ -191,43 +193,6 @@ def post():
         return jsonify({'msg': '노하우 등록이 완료되었습니다!'})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("home"))
-
-@app.route("/get_posts", methods=['GET'])
-def get_posts():
-    token_receive = request.cookies.get('mytoken')
-    try:
-        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        # 포스팅 목록 받아오기
-        return jsonify({"result": "success", "msg": "포스팅을 가져왔습니다."})
-    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
-        return redirect(url_for("home"))
-
-
-@app.route('/update_like', methods=['POST'])
-def update_like():
-    token_receive = request.cookies.get('mytoken')
-    try:
-        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        # 좋아요 수 변경
-        return jsonify({"result": "success", 'msg': 'updated'})
-    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
-        return redirect(url_for("home"))
-
-
-
-@app.route('/user/<username>')
-def user(username):
-    # 각 사용자의 프로필과 글을 모아볼 수 있는 공간
-    token_receive = request.cookies.get('mytoken')
-    try:
-        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        status = (username == payload["id"])  # 내 프로필이면 True, 다른 사람 프로필 페이지면 False
-
-        user_info = db.users.find_one({"username": username}, {"_id": False})
-        return render_template('post.html', user_info=user_info, status=status)
-    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
-        return redirect(url_for("home"))
-
 
 
 if __name__ == '__main__':
