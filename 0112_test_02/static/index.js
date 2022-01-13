@@ -43,8 +43,10 @@ function updateLike(id, like) {
 
 function reviewSubmit(id) {
     event.preventDefault();
-    let comment = $('#comment_give').val()
-    console.log(comment);
+    let comment = event.target.parentNode.childNodes[1].value;
+    let reviewInput = event.target.parentNode.childNodes[1];
+    let review_list = event.target.parentNode.parentNode.childNodes[3];
+    console.log(review_list);
     $.ajax({
         type: 'POST',
         url: '/api/reviewWrite',
@@ -59,8 +61,8 @@ function reviewSubmit(id) {
                 method: "GET",
                 data: {},
                 success: function (response) {
-                    while (document.querySelector('.review_list').hasChildNodes()) {
-                        document.querySelector('.review_list').removeChild(document.querySelector('.review_list').firstChild)
+                    while (review_list.hasChildNodes()) {
+                        review_list.removeChild(review_list.firstChild)
                     }
                     let reviews = response['reviews'].reviews;
                     for (let i = 0; i < reviews.length; i++) {
@@ -76,10 +78,11 @@ function reviewSubmit(id) {
                                           </span>
                                          <span class="created">${created}</span>
                                     </div>`
-                        $('.review_list').append(temp_html);
+                        review_list.innerHTML += temp_html;
                     }
                 }
             })
+            reviewInput.value = '';
            //location.reload()
         }
     })
@@ -108,6 +111,7 @@ function reviewToggle(id) {
                                     <button onclick="reviewSubmit('${id}')">등록하기</button>
                                 </form>
                                 </div>`)
+        let rank_list = rank_item.nextSibling.childNodes[3];
         $.ajax({
             url: `/api/get_reviews?id_give=${id}&filter_give=${filterList[0]}`,
             method: "GET",
@@ -115,8 +119,8 @@ function reviewToggle(id) {
             success: function (response) {
                 let reviews = response['reviews'].reviews;
                 if(reviews) {
-                    while (document.querySelector('.review_list').hasChildNodes()) {
-                        document.querySelector('.review_list').removeChild(document.querySelector('.review_list').firstChild)
+                    while (rank_list.hasChildNodes()) {
+                        rank_list.removeChild(rank_list.firstChild)
                     }
                     for (let i = 0; i < reviews.length; i++) {
                         let comment = reviews[i].comment;
@@ -131,7 +135,7 @@ function reviewToggle(id) {
                                           </span>
                                          <span class="created">${created}</span>
                                     </div>`
-                        $('.review_list').append(temp_html);
+                        rank_item.nextSibling.childNodes[3].innerHTML += temp_html
                     }
                 }
             }
@@ -168,6 +172,7 @@ function getDish() {
     }
     if (filterList[0] === '한식') {
         document.querySelector('.filter_dish .dish:nth-of-type(3)').classList.remove('selected')
+        document.querySelector('.filter_dish .dish:nth-of-type(4)').classList.remove('selected')
         document.querySelector('.filter_dish .dish:nth-of-type(2)').classList.remove('selected')
         document.querySelector('.filter_dish .dish:nth-of-type(1)').classList.add('selected')
         $.ajax({
@@ -329,7 +334,7 @@ function getDish() {
                         let know_how = sortedKoreanFoods[i]['know_how'];
                         let username = sortedKoreanFoods[i]['id'];
                         let dbId = sortedKoreanFoods[i]['_id'];
-                                                let temp_html = `<div class="rank_item">
+                        let temp_html = `<div class="rank_item">
                                                     <div class="rank_item_number">${rank_number}</div>
                                                     <div class="rank_item_img">
                                                         <img src=${food_img} />
@@ -344,7 +349,7 @@ function getDish() {
                                                         <div class="rank_item_knowhow">
                                                             ${know_how}
                                                         </div>
-                                                        <button class='reviewButton' onclick="reviewToggle()">리뷰</button>
+                                                        <button class='reviewButton' onclick="reviewToggle('${dbId}')">리뷰</button>
                                                     </div>
                                                     <div class="rank_item_sub">
                                                         <div class="rank_item_expires">
@@ -377,19 +382,66 @@ function getDish() {
                                                                 </div>
                                                             </div>
                                                         </div>       
-                                                        <div class="position">
                                                         <div class='button_container'>
                                                             <button class='modify_button'>수정</button>
-                                                            <button class='delete_button' onclick="deleteLank('${dbId}')">삭제</button></div>
+                                                            <button class='delete_button' onclick="deleteLank('${dbId}')">삭제</button>
                                                         </div>                        
                                                     </div>
                                                 </div>`
-                        $('.rank_list').append(temp_html);
+                        let temp_html2 = `<div class="rank_item">
+                                                    <div class="rank_item_number">${rank_number}</div>
+                                                    <div class="rank_item_img">
+                                                        <img src=${food_img} />
+                                                    </div>
+                                                    <div class="rank_item_content">
+                                                        <div class="rank_item_title">
+                                                            <div class="dishName">${food_name}</div>
+                                                        </div>
+                                                        <div class="rank_item_comment">
+                                                            ${comment}
+                                                        </div>
+                                                        <div class="rank_item_knowhow">
+                                                            ${know_how}
+                                                        </div>
+                                                        <button class='reviewButton' onclick="reviewToggle('${dbId}')">리뷰</button>
+                                                    </div>
+                                                    <div class="rank_item_sub">
+                                                        <div class="rank_item_expires">
+                                                             <span class="expires_text">유통기한:</span>
+                                                             <span class="expires_start">${start_date}</span>
+                                                             <span>~</span>
+                                                             <span class="expires_last">${end_date}</span>
+                                                        </div>
+                                                        <div class="rank_item_priceTag">
+                                                            <span>할인율</span>
+                                                            <span>할인가격</span>
+                                                            <span>좋아요 수</span>
+                                                        </div>
+                                                        <div class="right_item_price">
+                                                            <div class="sale_rate">
+                                                                <div>
+                                                                    ${sale_rate}%
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_price">
+                                                                <div>
+                                                                    <div class="before_price">${prime_prices}</div>
+                                                                    <div class="current_price">${sale_prices}</div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_like" onclick="updateLike('${dbId}','${like}')">
+                                                                <div>
+                                                                    <div><i class="fa fa-thumbs-up"></i> </div>
+                                                                    <div>${like}</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>                          
+                                                    </div>
+                                                </div>`
                         if(loginName !== username){
-                            let hideButton = document.querySelectorAll('.button_container')
-                            for(let i =0; i<hideButton.length; i++){
-                                hideButton[i].classList.add('remove')
-                            }
+                            $('.rank_list').append(temp_html2);
+                        } else {
+                            $('.rank_list').append(temp_html);
                         }
                     }
                 }
@@ -413,7 +465,7 @@ function getDish() {
                         let know_how = sortedKoreanFoods[i]['know_how'];
                         let username = sortedKoreanFoods[i]['id'];
                         let dbId = sortedKoreanFoods[i]['_id'];
-                                               let temp_html = `<div class="rank_item">
+                        let temp_html = `<div class="rank_item">
                                                     <div class="rank_item_number">${rank_number}</div>
                                                     <div class="rank_item_img">
                                                         <img src=${food_img} />
@@ -428,7 +480,7 @@ function getDish() {
                                                         <div class="rank_item_knowhow">
                                                             ${know_how}
                                                         </div>
-                                                        <button class='reviewButton' onclick="reviewToggle()">리뷰</button>
+                                                        <button class='reviewButton' onclick="reviewToggle('${dbId}')">리뷰</button>
                                                     </div>
                                                     <div class="rank_item_sub">
                                                         <div class="rank_item_expires">
@@ -461,19 +513,66 @@ function getDish() {
                                                                 </div>
                                                             </div>
                                                         </div>       
-                                                        <div class="position">
                                                         <div class='button_container'>
                                                             <button class='modify_button'>수정</button>
-                                                            <button class='delete_button' onclick="deleteLank('${dbId}')">삭제</button></div>
+                                                            <button class='delete_button' onclick="deleteLank('${dbId}')">삭제</button>
                                                         </div>                        
                                                     </div>
                                                 </div>`
-                        $('.rank_list').append(temp_html);
+                        let temp_html2 = `<div class="rank_item">
+                                                    <div class="rank_item_number">${rank_number}</div>
+                                                    <div class="rank_item_img">
+                                                        <img src=${food_img} />
+                                                    </div>
+                                                    <div class="rank_item_content">
+                                                        <div class="rank_item_title">
+                                                            <div class="dishName">${food_name}</div>
+                                                        </div>
+                                                        <div class="rank_item_comment">
+                                                            ${comment}
+                                                        </div>
+                                                        <div class="rank_item_knowhow">
+                                                            ${know_how}
+                                                        </div>
+                                                        <button class='reviewButton' onclick="reviewToggle('${dbId}')">리뷰</button>
+                                                    </div>
+                                                    <div class="rank_item_sub">
+                                                        <div class="rank_item_expires">
+                                                             <span class="expires_text">유통기한:</span>
+                                                             <span class="expires_start">${start_date}</span>
+                                                             <span>~</span>
+                                                             <span class="expires_last">${end_date}</span>
+                                                        </div>
+                                                        <div class="rank_item_priceTag">
+                                                            <span>할인율</span>
+                                                            <span>할인가격</span>
+                                                            <span>좋아요 수</span>
+                                                        </div>
+                                                        <div class="right_item_price">
+                                                            <div class="sale_rate">
+                                                                <div>
+                                                                    ${sale_rate}%
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_price">
+                                                                <div>
+                                                                    <div class="before_price">${prime_prices}</div>
+                                                                    <div class="current_price">${sale_prices}</div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_like" onclick="updateLike('${dbId}','${like}')">
+                                                                <div>
+                                                                    <div><i class="fa fa-thumbs-up"></i> </div>
+                                                                    <div>${like}</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>                          
+                                                    </div>
+                                                </div>`
                         if(loginName !== username){
-                            let hideButton = document.querySelectorAll('.button_container')
-                            for(let i =0; i<hideButton.length; i++){
-                                hideButton[i].classList.add('remove')
-                            }
+                            $('.rank_list').append(temp_html2);
+                        } else {
+                            $('.rank_list').append(temp_html);
                         }
                     }
                 }
@@ -484,6 +583,7 @@ function getDish() {
     if (filterList[0] === '중식') {
         document.querySelector('.filter_dish .dish:nth-of-type(1)').classList.remove('selected')
         document.querySelector('.filter_dish .dish:nth-of-type(3)').classList.remove('selected')
+        document.querySelector('.filter_dish .dish:nth-of-type(4)').classList.remove('selected')
         document.querySelector('.filter_dish .dish:nth-of-type(2)').classList.add('selected')
         $.ajax({
             type: 'GET',
@@ -512,7 +612,7 @@ function getDish() {
                         let know_how = sortedChinaFoods[i]['know_how'];
                         let username = sortedChinaFoods[i]['id'];
                         let dbId = sortedChinaFoods[i]['_id'];
-                                              let temp_html = `<div class="rank_item">
+                        let temp_html = `<div class="rank_item">
                                                     <div class="rank_item_number">${rank_number}</div>
                                                     <div class="rank_item_img">
                                                         <img src=${food_img} />
@@ -527,7 +627,7 @@ function getDish() {
                                                         <div class="rank_item_knowhow">
                                                             ${know_how}
                                                         </div>
-                                                        <button class='reviewButton' onclick="reviewToggle()">리뷰</button>
+                                                        <button class='reviewButton' onclick="reviewToggle('${dbId}')">리뷰</button>
                                                     </div>
                                                     <div class="rank_item_sub">
                                                         <div class="rank_item_expires">
@@ -560,19 +660,66 @@ function getDish() {
                                                                 </div>
                                                             </div>
                                                         </div>       
-                                                        <div class="position">
                                                         <div class='button_container'>
                                                             <button class='modify_button'>수정</button>
-                                                            <button class='delete_button' onclick="deleteLank('${dbId}')">삭제</button></div>
+                                                            <button class='delete_button' onclick="deleteLank('${dbId}')">삭제</button>
                                                         </div>                        
                                                     </div>
                                                 </div>`
-                        $('.rank_list').append(temp_html);
+                        let temp_html2 = `<div class="rank_item">
+                                                    <div class="rank_item_number">${rank_number}</div>
+                                                    <div class="rank_item_img">
+                                                        <img src=${food_img} />
+                                                    </div>
+                                                    <div class="rank_item_content">
+                                                        <div class="rank_item_title">
+                                                            <div class="dishName">${food_name}</div>
+                                                        </div>
+                                                        <div class="rank_item_comment">
+                                                            ${comment}
+                                                        </div>
+                                                        <div class="rank_item_knowhow">
+                                                            ${know_how}
+                                                        </div>
+                                                        <button class='reviewButton' onclick="reviewToggle('${dbId}')">리뷰</button>
+                                                    </div>
+                                                    <div class="rank_item_sub">
+                                                        <div class="rank_item_expires">
+                                                             <span class="expires_text">유통기한:</span>
+                                                             <span class="expires_start">${start_date}</span>
+                                                             <span>~</span>
+                                                             <span class="expires_last">${end_date}</span>
+                                                        </div>
+                                                        <div class="rank_item_priceTag">
+                                                            <span>할인율</span>
+                                                            <span>할인가격</span>
+                                                            <span>좋아요 수</span>
+                                                        </div>
+                                                        <div class="right_item_price">
+                                                            <div class="sale_rate">
+                                                                <div>
+                                                                    ${sale_rate}%
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_price">
+                                                                <div>
+                                                                    <div class="before_price">${prime_prices}</div>
+                                                                    <div class="current_price">${sale_prices}</div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_like" onclick="updateLike('${dbId}','${like}')">
+                                                                <div>
+                                                                    <div><i class="fa fa-thumbs-up"></i> </div>
+                                                                    <div>${like}</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>                          
+                                                    </div>
+                                                </div>`
                         if(loginName !== username){
-                            let hideButton = document.querySelectorAll('.button_container')
-                            for(let i =0; i<hideButton.length; i++){
-                                hideButton[i].classList.add('remove')
-                            }
+                            $('.rank_list').append(temp_html2);
+                        } else {
+                            $('.rank_list').append(temp_html);
                         }
                     }
                 }
@@ -595,7 +742,7 @@ function getDish() {
                         let know_how = sortedChinaFoods[i]['know_how'];
                         let username = sortedChinaFoods[i]['id'];
                         let dbId = sortedChinaFoods[i]['_id'];
-                                               let temp_html = `<div class="rank_item">
+                        let temp_html = `<div class="rank_item">
                                                     <div class="rank_item_number">${rank_number}</div>
                                                     <div class="rank_item_img">
                                                         <img src=${food_img} />
@@ -610,7 +757,7 @@ function getDish() {
                                                         <div class="rank_item_knowhow">
                                                             ${know_how}
                                                         </div>
-                                                        <button class='reviewButton' onclick="reviewToggle()">리뷰</button>
+                                                        <button class='reviewButton' onclick="reviewToggle('${dbId}')">리뷰</button>
                                                     </div>
                                                     <div class="rank_item_sub">
                                                         <div class="rank_item_expires">
@@ -643,19 +790,66 @@ function getDish() {
                                                                 </div>
                                                             </div>
                                                         </div>       
-                                                        <div class="position">
                                                         <div class='button_container'>
                                                             <button class='modify_button'>수정</button>
-                                                            <button class='delete_button' onclick="deleteLank('${dbId}')">삭제</button></div>
+                                                            <button class='delete_button' onclick="deleteLank('${dbId}')">삭제</button>
                                                         </div>                        
                                                     </div>
                                                 </div>`
-                        $('.rank_list').append(temp_html);
+                        let temp_html2 = `<div class="rank_item">
+                                                    <div class="rank_item_number">${rank_number}</div>
+                                                    <div class="rank_item_img">
+                                                        <img src=${food_img} />
+                                                    </div>
+                                                    <div class="rank_item_content">
+                                                        <div class="rank_item_title">
+                                                            <div class="dishName">${food_name}</div>
+                                                        </div>
+                                                        <div class="rank_item_comment">
+                                                            ${comment}
+                                                        </div>
+                                                        <div class="rank_item_knowhow">
+                                                            ${know_how}
+                                                        </div>
+                                                        <button class='reviewButton' onclick="reviewToggle('${dbId}')">리뷰</button>
+                                                    </div>
+                                                    <div class="rank_item_sub">
+                                                        <div class="rank_item_expires">
+                                                             <span class="expires_text">유통기한:</span>
+                                                             <span class="expires_start">${start_date}</span>
+                                                             <span>~</span>
+                                                             <span class="expires_last">${end_date}</span>
+                                                        </div>
+                                                        <div class="rank_item_priceTag">
+                                                            <span>할인율</span>
+                                                            <span>할인가격</span>
+                                                            <span>좋아요 수</span>
+                                                        </div>
+                                                        <div class="right_item_price">
+                                                            <div class="sale_rate">
+                                                                <div>
+                                                                    ${sale_rate}%
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_price">
+                                                                <div>
+                                                                    <div class="before_price">${prime_prices}</div>
+                                                                    <div class="current_price">${sale_prices}</div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_like" onclick="updateLike('${dbId}','${like}')">
+                                                                <div>
+                                                                    <div><i class="fa fa-thumbs-up"></i> </div>
+                                                                    <div>${like}</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>                          
+                                                    </div>
+                                                </div>`
                         if(loginName !== username){
-                            let hideButton = document.querySelectorAll('.button_container')
-                            for(let i =0; i<hideButton.length; i++){
-                                hideButton[i].classList.add('remove')
-                            }
+                            $('.rank_list').append(temp_html2);
+                        } else {
+                            $('.rank_list').append(temp_html);
                         }
                     }
                 }
@@ -678,7 +872,7 @@ function getDish() {
                         let know_how = sortedChinaFoods[i]['know_how'];
                         let username = sortedChinaFoods[i]['id'];
                         let dbId = sortedChinaFoods[i]['_id'];
-                                               let temp_html = `<div class="rank_item">
+                        let temp_html = `<div class="rank_item">
                                                     <div class="rank_item_number">${rank_number}</div>
                                                     <div class="rank_item_img">
                                                         <img src=${food_img} />
@@ -693,7 +887,7 @@ function getDish() {
                                                         <div class="rank_item_knowhow">
                                                             ${know_how}
                                                         </div>
-                                                        <button class='reviewButton' onclick="reviewToggle()">리뷰</button>
+                                                        <button class='reviewButton' onclick="reviewToggle('${dbId}')">리뷰</button>
                                                     </div>
                                                     <div class="rank_item_sub">
                                                         <div class="rank_item_expires">
@@ -726,19 +920,884 @@ function getDish() {
                                                                 </div>
                                                             </div>
                                                         </div>       
-                                                        <div class="position">
                                                         <div class='button_container'>
                                                             <button class='modify_button'>수정</button>
-                                                            <button class='delete_button' onclick="deleteLank('${dbId}')">삭제</button></div>
+                                                            <button class='delete_button' onclick="deleteLank('${dbId}')">삭제</button>
                                                         </div>                        
                                                     </div>
                                                 </div>`
-                        $('.rank_list').append(temp_html);
+                        let temp_html2 = `<div class="rank_item">
+                                                    <div class="rank_item_number">${rank_number}</div>
+                                                    <div class="rank_item_img">
+                                                        <img src=${food_img} />
+                                                    </div>
+                                                    <div class="rank_item_content">
+                                                        <div class="rank_item_title">
+                                                            <div class="dishName">${food_name}</div>
+                                                        </div>
+                                                        <div class="rank_item_comment">
+                                                            ${comment}
+                                                        </div>
+                                                        <div class="rank_item_knowhow">
+                                                            ${know_how}
+                                                        </div>
+                                                        <button class='reviewButton' onclick="reviewToggle('${dbId}')">리뷰</button>
+                                                    </div>
+                                                    <div class="rank_item_sub">
+                                                        <div class="rank_item_expires">
+                                                             <span class="expires_text">유통기한:</span>
+                                                             <span class="expires_start">${start_date}</span>
+                                                             <span>~</span>
+                                                             <span class="expires_last">${end_date}</span>
+                                                        </div>
+                                                        <div class="rank_item_priceTag">
+                                                            <span>할인율</span>
+                                                            <span>할인가격</span>
+                                                            <span>좋아요 수</span>
+                                                        </div>
+                                                        <div class="right_item_price">
+                                                            <div class="sale_rate">
+                                                                <div>
+                                                                    ${sale_rate}%
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_price">
+                                                                <div>
+                                                                    <div class="before_price">${prime_prices}</div>
+                                                                    <div class="current_price">${sale_prices}</div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_like" onclick="updateLike('${dbId}','${like}')">
+                                                                <div>
+                                                                    <div><i class="fa fa-thumbs-up"></i> </div>
+                                                                    <div>${like}</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>                          
+                                                    </div>
+                                                </div>`
                         if(loginName !== username){
-                            let hideButton = document.querySelectorAll('.button_container')
-                            for(let i =0; i<hideButton.length; i++){
-                                hideButton[i].classList.add('remove')
-                            }
+                            $('.rank_list').append(temp_html2);
+                        } else {
+                            $('.rank_list').append(temp_html);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    if (filterList[0] === '일식'){
+        document.querySelector('.filter_dish .dish:nth-of-type(1)').classList.remove('selected')
+        document.querySelector('.filter_dish .dish:nth-of-type(2)').classList.remove('selected')
+        document.querySelector('.filter_dish .dish:nth-of-type(4)').classList.remove('selected')
+        document.querySelector('.filter_dish .dish:nth-of-type(3)').classList.add('selected')
+        $.ajax({
+            type: 'GET',
+            url: '/api/foodlist?dish_give=일식',
+            data: {},
+            success: function (response) {
+                let loginName = response['id'];
+                let japanFoods = response['japanfoods'];
+                if (filterList[1] === '최저가') {
+                    document.querySelector('.filter_rank .rank:nth-of-type(2)').classList.remove('selected')
+                    document.querySelector('.filter_rank .rank:nth-of-type(3)').classList.remove('selected')
+                    document.querySelector('.filter_rank .rank:nth-of-type(1)').classList.add('selected')
+                    let sortedJapanFoods = japanFoods.sort((a, b) => parseInt(a.sale_prices, 10) - parseInt(b.sale_prices, 10))
+                    for (let i = 0; i < sortedJapanFoods.length; i++) {
+                        let rank_number = `${i + 1}`;
+                        let food_name = sortedJapanFoods[i]['food_name'];
+                        let start_date = sortedJapanFoods[i]['start_date'];
+                        let end_date = sortedJapanFoods[i]['end_date'];
+                        let comment = sortedJapanFoods[i]['comment'];
+                        let prime_prices = sortedJapanFoods[i]['prime_prices'];
+                        let sale_prices = sortedJapanFoods[i]['sale_prices'];
+                        let like = sortedJapanFoods[i]['like'] || 0;
+                        let sale_rate = Math.floor((parseInt((sortedJapanFoods[i]['sale_prices']), 10) / parseInt((sortedJapanFoods[i]['prime_prices']), 10)) * 100)
+                        // let sale_rate = Math.floor((parseInt((sortedKoreanFoods[i]['sale_prices']), 10) / parseInt((sortedKoreanFoods[i]['prime_prices']), 10)) * 100)
+                        let food_img = sortedJapanFoods[i]['img'];
+                        let know_how = sortedJapanFoods[i]['know_how'];
+                        let username = sortedJapanFoods[i]['id'];
+                        let dbId = sortedJapanFoods[i]['_id'];
+                        let temp_html = `<div class="rank_item">
+                                                    <div class="rank_item_number">${rank_number}</div>
+                                                    <div class="rank_item_img">
+                                                        <img src=${food_img} />
+                                                    </div>
+                                                    <div class="rank_item_content">
+                                                        <div class="rank_item_title">
+                                                            <div class="dishName">${food_name}</div>
+                                                        </div>
+                                                        <div class="rank_item_comment">
+                                                            ${comment}
+                                                        </div>
+                                                        <div class="rank_item_knowhow">
+                                                            ${know_how}
+                                                        </div>
+                                                        <button class='reviewButton' onclick="reviewToggle('${dbId}')">리뷰</button>
+                                                    </div>
+                                                    <div class="rank_item_sub">
+                                                        <div class="rank_item_expires">
+                                                             <span class="expires_text">유통기한:</span>
+                                                             <span class="expires_start">${start_date}</span>
+                                                             <span>~</span>
+                                                             <span class="expires_last">${end_date}</span>
+                                                        </div>
+                                                        <div class="rank_item_priceTag">
+                                                            <span>할인율</span>
+                                                            <span>할인가격</span>
+                                                            <span>좋아요 수</span>
+                                                        </div>
+                                                        <div class="right_item_price">
+                                                            <div class="sale_rate">
+                                                                <div>
+                                                                    ${sale_rate}%
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_price">
+                                                                <div>
+                                                                    <div class="before_price">${prime_prices}</div>
+                                                                    <div class="current_price">${sale_prices}</div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_like" onclick="updateLike('${dbId}','${like}')">
+                                                                <div>
+                                                                    <div><i class="fa fa-thumbs-up"></i> </div>
+                                                                    <div>${like}</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>       
+                                                        <div class='button_container'>
+                                                            <button class='modify_button'>수정</button>
+                                                            <button class='delete_button' onclick="deleteLank('${dbId}')">삭제</button>
+                                                        </div>                        
+                                                    </div>
+                                                </div>`
+                        let temp_html2 = `<div class="rank_item">
+                                                    <div class="rank_item_number">${rank_number}</div>
+                                                    <div class="rank_item_img">
+                                                        <img src=${food_img} />
+                                                    </div>
+                                                    <div class="rank_item_content">
+                                                        <div class="rank_item_title">
+                                                            <div class="dishName">${food_name}</div>
+                                                        </div>
+                                                        <div class="rank_item_comment">
+                                                            ${comment}
+                                                        </div>
+                                                        <div class="rank_item_knowhow">
+                                                            ${know_how}
+                                                        </div>
+                                                        <button class='reviewButton' onclick="reviewToggle('${dbId}')">리뷰</button>
+                                                    </div>
+                                                    <div class="rank_item_sub">
+                                                        <div class="rank_item_expires">
+                                                             <span class="expires_text">유통기한:</span>
+                                                             <span class="expires_start">${start_date}</span>
+                                                             <span>~</span>
+                                                             <span class="expires_last">${end_date}</span>
+                                                        </div>
+                                                        <div class="rank_item_priceTag">
+                                                            <span>할인율</span>
+                                                            <span>할인가격</span>
+                                                            <span>좋아요 수</span>
+                                                        </div>
+                                                        <div class="right_item_price">
+                                                            <div class="sale_rate">
+                                                                <div>
+                                                                    ${sale_rate}%
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_price">
+                                                                <div>
+                                                                    <div class="before_price">${prime_prices}</div>
+                                                                    <div class="current_price">${sale_prices}</div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_like" onclick="updateLike('${dbId}','${like}')">
+                                                                <div>
+                                                                    <div><i class="fa fa-thumbs-up"></i> </div>
+                                                                    <div>${like}</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>                          
+                                                    </div>
+                                                </div>`
+                        if(loginName !== username){
+                            $('.rank_list').append(temp_html2);
+                        } else {
+                            $('.rank_list').append(temp_html);
+                        }
+                    }
+                }
+                if (filterList[1] === '인기순') {
+                    document.querySelector('.filter_rank .rank:nth-of-type(3)').classList.remove('selected')
+                    document.querySelector('.filter_rank .rank:nth-of-type(1)').classList.remove('selected')
+                    document.querySelector('.filter_rank .rank:nth-of-type(2)').classList.add('selected')
+                    let sortedJapanFoods = japanFoods.sort((a, b) => b.like - a.like)
+                    for (let i = 0; i < sortedJapanFoods.length; i++) {
+                        let rank_number = `${i + 1}`;
+                        let food_name = sortedJapanFoods[i]['food_name'];
+                        let start_date = sortedJapanFoods[i]['start_date'];
+                        let end_date = sortedJapanFoods[i]['end_date'];
+                        let comment = sortedJapanFoods[i]['comment'];
+                        let prime_prices = sortedJapanFoods[i]['prime_prices'];
+                        let sale_prices = sortedJapanFoods[i]['sale_prices'];
+                        let like = sortedJapanFoods[i]['like'] || 0;
+                        let sale_rate = Math.floor((parseInt((sortedJapanFoods[i]['sale_prices']), 10) / parseInt((sortedJapanFoods[i]['prime_prices']), 10)) * 100)
+                        // let sale_rate = Math.floor((parseInt((sortedKoreanFoods[i]['sale_prices']), 10) / parseInt((sortedKoreanFoods[i]['prime_prices']), 10)) * 100)
+                        let food_img = sortedJapanFoods[i]['img'];
+                        let know_how = sortedJapanFoods[i]['know_how'];
+                        let username = sortedJapanFoods[i]['id'];
+                        let dbId = sortedJapanFoods[i]['_id'];
+                        let temp_html = `<div class="rank_item">
+                                                    <div class="rank_item_number">${rank_number}</div>
+                                                    <div class="rank_item_img">
+                                                        <img src=${food_img} />
+                                                    </div>
+                                                    <div class="rank_item_content">
+                                                        <div class="rank_item_title">
+                                                            <div class="dishName">${food_name}</div>
+                                                        </div>
+                                                        <div class="rank_item_comment">
+                                                            ${comment}
+                                                        </div>
+                                                        <div class="rank_item_knowhow">
+                                                            ${know_how}
+                                                        </div>
+                                                        <button class='reviewButton' onclick="reviewToggle('${dbId}')">리뷰</button>
+                                                    </div>
+                                                    <div class="rank_item_sub">
+                                                        <div class="rank_item_expires">
+                                                             <span class="expires_text">유통기한:</span>
+                                                             <span class="expires_start">${start_date}</span>
+                                                             <span>~</span>
+                                                             <span class="expires_last">${end_date}</span>
+                                                        </div>
+                                                        <div class="rank_item_priceTag">
+                                                            <span>할인율</span>
+                                                            <span>할인가격</span>
+                                                            <span>좋아요 수</span>
+                                                        </div>
+                                                        <div class="right_item_price">
+                                                            <div class="sale_rate">
+                                                                <div>
+                                                                    ${sale_rate}%
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_price">
+                                                                <div>
+                                                                    <div class="before_price">${prime_prices}</div>
+                                                                    <div class="current_price">${sale_prices}</div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_like" onclick="updateLike('${dbId}','${like}')">
+                                                                <div>
+                                                                    <div><i class="fa fa-thumbs-up"></i> </div>
+                                                                    <div>${like}</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>       
+                                                        <div class='button_container'>
+                                                            <button class='modify_button'>수정</button>
+                                                            <button class='delete_button' onclick="deleteLank('${dbId}')">삭제</button>
+                                                        </div>                        
+                                                    </div>
+                                                </div>`
+                        let temp_html2 = `<div class="rank_item">
+                                                    <div class="rank_item_number">${rank_number}</div>
+                                                    <div class="rank_item_img">
+                                                        <img src=${food_img} />
+                                                    </div>
+                                                    <div class="rank_item_content">
+                                                        <div class="rank_item_title">
+                                                            <div class="dishName">${food_name}</div>
+                                                        </div>
+                                                        <div class="rank_item_comment">
+                                                            ${comment}
+                                                        </div>
+                                                        <div class="rank_item_knowhow">
+                                                            ${know_how}
+                                                        </div>
+                                                        <button class='reviewButton' onclick="reviewToggle('${dbId}')">리뷰</button>
+                                                    </div>
+                                                    <div class="rank_item_sub">
+                                                        <div class="rank_item_expires">
+                                                             <span class="expires_text">유통기한:</span>
+                                                             <span class="expires_start">${start_date}</span>
+                                                             <span>~</span>
+                                                             <span class="expires_last">${end_date}</span>
+                                                        </div>
+                                                        <div class="rank_item_priceTag">
+                                                            <span>할인율</span>
+                                                            <span>할인가격</span>
+                                                            <span>좋아요 수</span>
+                                                        </div>
+                                                        <div class="right_item_price">
+                                                            <div class="sale_rate">
+                                                                <div>
+                                                                    ${sale_rate}%
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_price">
+                                                                <div>
+                                                                    <div class="before_price">${prime_prices}</div>
+                                                                    <div class="current_price">${sale_prices}</div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_like" onclick="updateLike('${dbId}','${like}')">
+                                                                <div>
+                                                                    <div><i class="fa fa-thumbs-up"></i> </div>
+                                                                    <div>${like}</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>                          
+                                                    </div>
+                                                </div>`
+                        if(loginName !== username){
+                            $('.rank_list').append(temp_html2);
+                        } else {
+                            $('.rank_list').append(temp_html);
+                        }
+                    }
+                }
+                if (filterList[1] === '할인순') {
+                    document.querySelector('.filter_rank .rank:nth-of-type(1)').classList.remove('selected')
+                    document.querySelector('.filter_rank .rank:nth-of-type(2)').classList.remove('selected')
+                    document.querySelector('.filter_rank .rank:nth-of-type(3)').classList.add('selected')
+                    let sortedJapanFoods = japanFoods.sort((a, b) => Math.floor(parseInt(b.sale_prices, 10) / parseInt(b.prime_prices, 10) * 100) - Math.floor(parseInt(a.sale_prices, 10) / parseInt(a.prime_prices, 10) * 100))
+                    for (let i = 0; i < sortedJapanFoods.length; i++) {
+                        let rank_number = `${i + 1}`;
+                        let food_name = sortedJapanFoods[i]['food_name'];
+                        let start_date = sortedJapanFoods[i]['start_date'];
+                        let end_date = sortedJapanFoods[i]['end_date'];
+                        let comment = sortedJapanFoods[i]['comment'];
+                        let prime_prices = sortedJapanFoods[i]['prime_prices'];
+                        let sale_prices = sortedJapanFoods[i]['sale_prices'];
+                        let like = sortedJapanFoods[i]['like'] || 0;
+                        let sale_rate = Math.floor((parseInt((sortedJapanFoods[i]['sale_prices']), 10) / parseInt((sortedJapanFoods[i]['prime_prices']), 10)) * 100)
+                        // let sale_rate = Math.floor((parseInt((sortedKoreanFoods[i]['sale_prices']), 10) / parseInt((sortedKoreanFoods[i]['prime_prices']), 10)) * 100)
+                        let food_img = sortedJapanFoods[i]['img'];
+                        let know_how = sortedJapanFoods[i]['know_how'];
+                        let username = sortedJapanFoods[i]['id'];
+                        let dbId = sortedJapanFoods[i]['_id'];
+                        let temp_html = `<div class="rank_item">
+                                                    <div class="rank_item_number">${rank_number}</div>
+                                                    <div class="rank_item_img">
+                                                        <img src=${food_img} />
+                                                    </div>
+                                                    <div class="rank_item_content">
+                                                        <div class="rank_item_title">
+                                                            <div class="dishName">${food_name}</div>
+                                                        </div>
+                                                        <div class="rank_item_comment">
+                                                            ${comment}
+                                                        </div>
+                                                        <div class="rank_item_knowhow">
+                                                            ${know_how}
+                                                        </div>
+                                                        <button class='reviewButton' onclick="reviewToggle('${dbId}')">리뷰</button>
+                                                    </div>
+                                                    <div class="rank_item_sub">
+                                                        <div class="rank_item_expires">
+                                                             <span class="expires_text">유통기한:</span>
+                                                             <span class="expires_start">${start_date}</span>
+                                                             <span>~</span>
+                                                             <span class="expires_last">${end_date}</span>
+                                                        </div>
+                                                        <div class="rank_item_priceTag">
+                                                            <span>할인율</span>
+                                                            <span>할인가격</span>
+                                                            <span>좋아요 수</span>
+                                                        </div>
+                                                        <div class="right_item_price">
+                                                            <div class="sale_rate">
+                                                                <div>
+                                                                    ${sale_rate}%
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_price">
+                                                                <div>
+                                                                    <div class="before_price">${prime_prices}</div>
+                                                                    <div class="current_price">${sale_prices}</div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_like" onclick="updateLike('${dbId}','${like}')">
+                                                                <div>
+                                                                    <div><i class="fa fa-thumbs-up"></i> </div>
+                                                                    <div>${like}</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>       
+                                                        <div class='button_container'>
+                                                            <button class='modify_button'>수정</button>
+                                                            <button class='delete_button' onclick="deleteLank('${dbId}')">삭제</button>
+                                                        </div>                        
+                                                    </div>
+                                                </div>`
+                        let temp_html2 = `<div class="rank_item">
+                                                    <div class="rank_item_number">${rank_number}</div>
+                                                    <div class="rank_item_img">
+                                                        <img src=${food_img} />
+                                                    </div>
+                                                    <div class="rank_item_content">
+                                                        <div class="rank_item_title">
+                                                            <div class="dishName">${food_name}</div>
+                                                        </div>
+                                                        <div class="rank_item_comment">
+                                                            ${comment}
+                                                        </div>
+                                                        <div class="rank_item_knowhow">
+                                                            ${know_how}
+                                                        </div>
+                                                        <button class='reviewButton' onclick="reviewToggle('${dbId}')">리뷰</button>
+                                                    </div>
+                                                    <div class="rank_item_sub">
+                                                        <div class="rank_item_expires">
+                                                             <span class="expires_text">유통기한:</span>
+                                                             <span class="expires_start">${start_date}</span>
+                                                             <span>~</span>
+                                                             <span class="expires_last">${end_date}</span>
+                                                        </div>
+                                                        <div class="rank_item_priceTag">
+                                                            <span>할인율</span>
+                                                            <span>할인가격</span>
+                                                            <span>좋아요 수</span>
+                                                        </div>
+                                                        <div class="right_item_price">
+                                                            <div class="sale_rate">
+                                                                <div>
+                                                                    ${sale_rate}%
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_price">
+                                                                <div>
+                                                                    <div class="before_price">${prime_prices}</div>
+                                                                    <div class="current_price">${sale_prices}</div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_like" onclick="updateLike('${dbId}','${like}')">
+                                                                <div>
+                                                                    <div><i class="fa fa-thumbs-up"></i> </div>
+                                                                    <div>${like}</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>                          
+                                                    </div>
+                                                </div>`
+                        if(loginName !== username){
+                            $('.rank_list').append(temp_html2);
+                        } else {
+                            $('.rank_list').append(temp_html);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    if (filterList[0] === '양식'){
+        document.querySelector('.filter_dish .dish:nth-of-type(1)').classList.remove('selected')
+        document.querySelector('.filter_dish .dish:nth-of-type(2)').classList.remove('selected')
+        document.querySelector('.filter_dish .dish:nth-of-type(3)').classList.remove('selected')
+        document.querySelector('.filter_dish .dish:nth-of-type(4)').classList.add('selected')
+        $.ajax({
+            type: 'GET',
+            url: '/api/foodlist?dish_give=양식',
+           data: {},
+            success: function (response) {
+                let loginName = response['id'];
+                let westernFoods = response['westernfoods'];
+                if (filterList[1] === '최저가') {
+                    document.querySelector('.filter_rank .rank:nth-of-type(2)').classList.remove('selected')
+                    document.querySelector('.filter_rank .rank:nth-of-type(3)').classList.remove('selected')
+                    document.querySelector('.filter_rank .rank:nth-of-type(1)').classList.add('selected')
+                    let sortedWesternFoods = westernFoods.sort((a, b) => parseInt(a.sale_prices, 10) - parseInt(b.sale_prices, 10))
+                    for (let i = 0; i < sortedWesternFoods.length; i++) {
+                        let rank_number = `${i + 1}`;
+                        let food_name = sortedWesternFoods[i]['food_name'];
+                        let start_date = sortedWesternFoods[i]['start_date'];
+                        let end_date = sortedWesternFoods[i]['end_date'];
+                        let comment = sortedWesternFoods[i]['comment'];
+                        let prime_prices = sortedWesternFoods[i]['prime_prices'];
+                        let sale_prices = sortedWesternFoods[i]['sale_prices'];
+                        let like = sortedWesternFoods[i]['like'] || 0;
+                        let sale_rate = Math.floor((parseInt((sortedWesternFoods[i]['sale_prices']), 10) / parseInt((sortedWesternFoods[i]['prime_prices']), 10)) * 100)
+                        // let sale_rate = Math.floor((parseInt((sortedKoreanFoods[i]['sale_prices']), 10) / parseInt((sortedKoreanFoods[i]['prime_prices']), 10)) * 100)
+                        let food_img = sortedWesternFoods[i]['img'];
+                        let know_how = sortedWesternFoods[i]['know_how'];
+                        let username = sortedWesternFoods[i]['id'];
+                        let dbId = sortedWesternFoods[i]['_id'];
+                        let temp_html = `<div class="rank_item">
+                                                    <div class="rank_item_number">${rank_number}</div>
+                                                    <div class="rank_item_img">
+                                                        <img src=${food_img} />
+                                                    </div>
+                                                    <div class="rank_item_content">
+                                                        <div class="rank_item_title">
+                                                            <div class="dishName">${food_name}</div>
+                                                        </div>
+                                                        <div class="rank_item_comment">
+                                                            ${comment}
+                                                        </div>
+                                                        <div class="rank_item_knowhow">
+                                                            ${know_how}
+                                                        </div>
+                                                        <button class='reviewButton' onclick="reviewToggle('${dbId}')">리뷰</button>
+                                                    </div>
+                                                    <div class="rank_item_sub">
+                                                        <div class="rank_item_expires">
+                                                             <span class="expires_text">유통기한:</span>
+                                                             <span class="expires_start">${start_date}</span>
+                                                             <span>~</span>
+                                                             <span class="expires_last">${end_date}</span>
+                                                        </div>
+                                                        <div class="rank_item_priceTag">
+                                                            <span>할인율</span>
+                                                            <span>할인가격</span>
+                                                            <span>좋아요 수</span>
+                                                        </div>
+                                                        <div class="right_item_price">
+                                                            <div class="sale_rate">
+                                                                <div>
+                                                                    ${sale_rate}%
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_price">
+                                                                <div>
+                                                                    <div class="before_price">${prime_prices}</div>
+                                                                    <div class="current_price">${sale_prices}</div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_like" onclick="updateLike('${dbId}','${like}')">
+                                                                <div>
+                                                                    <div><i class="fa fa-thumbs-up"></i> </div>
+                                                                    <div>${like}</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>       
+                                                        <div class='button_container'>
+                                                            <button class='modify_button'>수정</button>
+                                                            <button class='delete_button' onclick="deleteLank('${dbId}')">삭제</button>
+                                                        </div>                        
+                                                    </div>
+                                                </div>`
+                        let temp_html2 = `<div class="rank_item">
+                                                    <div class="rank_item_number">${rank_number}</div>
+                                                    <div class="rank_item_img">
+                                                        <img src=${food_img} />
+                                                    </div>
+                                                    <div class="rank_item_content">
+                                                        <div class="rank_item_title">
+                                                            <div class="dishName">${food_name}</div>
+                                                        </div>
+                                                        <div class="rank_item_comment">
+                                                            ${comment}
+                                                        </div>
+                                                        <div class="rank_item_knowhow">
+                                                            ${know_how}
+                                                        </div>
+                                                        <button class='reviewButton' onclick="reviewToggle('${dbId}')">리뷰</button>
+                                                    </div>
+                                                    <div class="rank_item_sub">
+                                                        <div class="rank_item_expires">
+                                                             <span class="expires_text">유통기한:</span>
+                                                             <span class="expires_start">${start_date}</span>
+                                                             <span>~</span>
+                                                             <span class="expires_last">${end_date}</span>
+                                                        </div>
+                                                        <div class="rank_item_priceTag">
+                                                            <span>할인율</span>
+                                                            <span>할인가격</span>
+                                                            <span>좋아요 수</span>
+                                                        </div>
+                                                        <div class="right_item_price">
+                                                            <div class="sale_rate">
+                                                                <div>
+                                                                    ${sale_rate}%
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_price">
+                                                                <div>
+                                                                    <div class="before_price">${prime_prices}</div>
+                                                                    <div class="current_price">${sale_prices}</div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_like" onclick="updateLike('${dbId}','${like}')">
+                                                                <div>
+                                                                    <div><i class="fa fa-thumbs-up"></i> </div>
+                                                                    <div>${like}</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>                          
+                                                    </div>
+                                                </div>`
+                        if(loginName !== username){
+                            $('.rank_list').append(temp_html2);
+                        } else {
+                            $('.rank_list').append(temp_html);
+                        }
+                    }
+                }
+                if (filterList[1] === '인기순') {
+                    document.querySelector('.filter_rank .rank:nth-of-type(3)').classList.remove('selected')
+                    document.querySelector('.filter_rank .rank:nth-of-type(1)').classList.remove('selected')
+                    document.querySelector('.filter_rank .rank:nth-of-type(2)').classList.add('selected')
+                    let sortedWesternFoods = westernFoods.sort((a, b) => b.like - a.like)
+                    for (let i = 0; i < sortedWesternFoods.length; i++) {
+                        let rank_number = `${i + 1}`;
+                        let food_name = sortedWesternFoods[i]['food_name'];
+                        let start_date = sortedWesternFoods[i]['start_date'];
+                        let end_date = sortedWesternFoods[i]['end_date'];
+                        let comment = sortedWesternFoods[i]['comment'];
+                        let prime_prices = sortedWesternFoods[i]['prime_prices'];
+                        let sale_prices = sortedWesternFoods[i]['sale_prices'];
+                        let like = sortedWesternFoods[i]['like'] || 0;
+                        let sale_rate = Math.floor((parseInt((sortedWesternFoods[i]['sale_prices']), 10) / parseInt((sortedWesternFoods[i]['prime_prices']), 10)) * 100)
+                        // let sale_rate = Math.floor((parseInt((sortedKoreanFoods[i]['sale_prices']), 10) / parseInt((sortedKoreanFoods[i]['prime_prices']), 10)) * 100)
+                        let food_img = sortedWesternFoods[i]['img'];
+                        let know_how = sortedWesternFoods[i]['know_how'];
+                        let username = sortedWesternFoods[i]['id'];
+                        let dbId = sortedWesternFoods[i]['_id'];
+                        let temp_html = `<div class="rank_item">
+                                                    <div class="rank_item_number">${rank_number}</div>
+                                                    <div class="rank_item_img">
+                                                        <img src=${food_img} />
+                                                    </div>
+                                                    <div class="rank_item_content">
+                                                        <div class="rank_item_title">
+                                                            <div class="dishName">${food_name}</div>
+                                                        </div>
+                                                        <div class="rank_item_comment">
+                                                            ${comment}
+                                                        </div>
+                                                        <div class="rank_item_knowhow">
+                                                            ${know_how}
+                                                        </div>
+                                                        <button class='reviewButton' onclick="reviewToggle('${dbId}')">리뷰</button>
+                                                    </div>
+                                                    <div class="rank_item_sub">
+                                                        <div class="rank_item_expires">
+                                                             <span class="expires_text">유통기한:</span>
+                                                             <span class="expires_start">${start_date}</span>
+                                                             <span>~</span>
+                                                             <span class="expires_last">${end_date}</span>
+                                                        </div>
+                                                        <div class="rank_item_priceTag">
+                                                            <span>할인율</span>
+                                                            <span>할인가격</span>
+                                                            <span>좋아요 수</span>
+                                                        </div>
+                                                        <div class="right_item_price">
+                                                            <div class="sale_rate">
+                                                                <div>
+                                                                    ${sale_rate}%
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_price">
+                                                                <div>
+                                                                    <div class="before_price">${prime_prices}</div>
+                                                                    <div class="current_price">${sale_prices}</div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_like" onclick="updateLike('${dbId}','${like}')">
+                                                                <div>
+                                                                    <div><i class="fa fa-thumbs-up"></i> </div>
+                                                                    <div>${like}</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>       
+                                                        <div class='button_container'>
+                                                            <button class='modify_button'>수정</button>
+                                                            <button class='delete_button' onclick="deleteLank('${dbId}')">삭제</button>
+                                                        </div>                        
+                                                    </div>
+                                                </div>`
+                        let temp_html2 = `<div class="rank_item">
+                                                    <div class="rank_item_number">${rank_number}</div>
+                                                    <div class="rank_item_img">
+                                                        <img src=${food_img} />
+                                                    </div>
+                                                    <div class="rank_item_content">
+                                                        <div class="rank_item_title">
+                                                            <div class="dishName">${food_name}</div>
+                                                        </div>
+                                                        <div class="rank_item_comment">
+                                                            ${comment}
+                                                        </div>
+                                                        <div class="rank_item_knowhow">
+                                                            ${know_how}
+                                                        </div>
+                                                        <button class='reviewButton' onclick="reviewToggle('${dbId}')">리뷰</button>
+                                                    </div>
+                                                    <div class="rank_item_sub">
+                                                        <div class="rank_item_expires">
+                                                             <span class="expires_text">유통기한:</span>
+                                                             <span class="expires_start">${start_date}</span>
+                                                             <span>~</span>
+                                                             <span class="expires_last">${end_date}</span>
+                                                        </div>
+                                                        <div class="rank_item_priceTag">
+                                                            <span>할인율</span>
+                                                            <span>할인가격</span>
+                                                            <span>좋아요 수</span>
+                                                        </div>
+                                                        <div class="right_item_price">
+                                                            <div class="sale_rate">
+                                                                <div>
+                                                                    ${sale_rate}%
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_price">
+                                                                <div>
+                                                                    <div class="before_price">${prime_prices}</div>
+                                                                    <div class="current_price">${sale_prices}</div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_like" onclick="updateLike('${dbId}','${like}')">
+                                                                <div>
+                                                                    <div><i class="fa fa-thumbs-up"></i> </div>
+                                                                    <div>${like}</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>                          
+                                                    </div>
+                                                </div>`
+                        if(loginName !== username){
+                            $('.rank_list').append(temp_html2);
+                        } else {
+                            $('.rank_list').append(temp_html);
+                        }
+                    }
+                }
+                if (filterList[1] === '할인순') {
+                    document.querySelector('.filter_rank .rank:nth-of-type(1)').classList.remove('selected')
+                    document.querySelector('.filter_rank .rank:nth-of-type(2)').classList.remove('selected')
+                    document.querySelector('.filter_rank .rank:nth-of-type(3)').classList.add('selected')
+                    let sortedWesternFoods = westernFoods.sort((a, b) => Math.floor(parseInt(b.sale_prices, 10) / parseInt(b.prime_prices, 10) * 100) - Math.floor(parseInt(a.sale_prices, 10) / parseInt(a.prime_prices, 10) * 100))
+                    for (let i = 0; i < sortedWesternFoods.length; i++) {
+                        let rank_number = `${i + 1}`;
+                        let food_name = sortedWesternFoods[i]['food_name'];
+                        let start_date = sortedWesternFoods[i]['start_date'];
+                        let end_date = sortedWesternFoods[i]['end_date'];
+                        let comment = sortedWesternFoods[i]['comment'];
+                        let prime_prices = sortedWesternFoods[i]['prime_prices'];
+                        let sale_prices = sortedWesternFoods[i]['sale_prices'];
+                        let like = sortedWesternFoods[i]['like'] || 0;
+                        let sale_rate = Math.floor((parseInt((sortedWesternFoods[i]['sale_prices']), 10) / parseInt((sortedWesternFoods[i]['prime_prices']), 10)) * 100)
+                        // let sale_rate = Math.floor((parseInt((sortedKoreanFoods[i]['sale_prices']), 10) / parseInt((sortedKoreanFoods[i]['prime_prices']), 10)) * 100)
+                        let food_img = sortedWesternFoods[i]['img'];
+                        let know_how = sortedWesternFoods[i]['know_how'];
+                        let username = sortedWesternFoods[i]['id'];
+                        let dbId = sortedWesternFoods[i]['_id'];
+                        let temp_html = `<div class="rank_item">
+                                                    <div class="rank_item_number">${rank_number}</div>
+                                                    <div class="rank_item_img">
+                                                        <img src=${food_img} />
+                                                    </div>
+                                                    <div class="rank_item_content">
+                                                        <div class="rank_item_title">
+                                                            <div class="dishName">${food_name}</div>
+                                                        </div>
+                                                        <div class="rank_item_comment">
+                                                            ${comment}
+                                                        </div>
+                                                        <div class="rank_item_knowhow">
+                                                            ${know_how}
+                                                        </div>
+                                                        <button class='reviewButton' onclick="reviewToggle('${dbId}')">리뷰</button>
+                                                    </div>
+                                                    <div class="rank_item_sub">
+                                                        <div class="rank_item_expires">
+                                                             <span class="expires_text">유통기한:</span>
+                                                             <span class="expires_start">${start_date}</span>
+                                                             <span>~</span>
+                                                             <span class="expires_last">${end_date}</span>
+                                                        </div>
+                                                        <div class="rank_item_priceTag">
+                                                            <span>할인율</span>
+                                                            <span>할인가격</span>
+                                                            <span>좋아요 수</span>
+                                                        </div>
+                                                        <div class="right_item_price">
+                                                            <div class="sale_rate">
+                                                                <div>
+                                                                    ${sale_rate}%
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_price">
+                                                                <div>
+                                                                    <div class="before_price">${prime_prices}</div>
+                                                                    <div class="current_price">${sale_prices}</div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_like" onclick="updateLike('${dbId}','${like}')">
+                                                                <div>
+                                                                    <div><i class="fa fa-thumbs-up"></i> </div>
+                                                                    <div>${like}</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>       
+                                                        <div class='button_container'>
+                                                            <button class='modify_button'>수정</button>
+                                                            <button class='delete_button' onclick="deleteLank('${dbId}')">삭제</button>
+                                                        </div>                        
+                                                    </div>
+                                                </div>`
+                        let temp_html2 = `<div class="rank_item">
+                                                    <div class="rank_item_number">${rank_number}</div>
+                                                    <div class="rank_item_img">
+                                                        <img src=${food_img} />
+                                                    </div>
+                                                    <div class="rank_item_content">
+                                                        <div class="rank_item_title">
+                                                            <div class="dishName">${food_name}</div>
+                                                        </div>
+                                                        <div class="rank_item_comment">
+                                                            ${comment}
+                                                        </div>
+                                                        <div class="rank_item_knowhow">
+                                                            ${know_how}
+                                                        </div>
+                                                        <button class='reviewButton' onclick="reviewToggle('${dbId}')">리뷰</button>
+                                                    </div>
+                                                    <div class="rank_item_sub">
+                                                        <div class="rank_item_expires">
+                                                             <span class="expires_text">유통기한:</span>
+                                                             <span class="expires_start">${start_date}</span>
+                                                             <span>~</span>
+                                                             <span class="expires_last">${end_date}</span>
+                                                        </div>
+                                                        <div class="rank_item_priceTag">
+                                                            <span>할인율</span>
+                                                            <span>할인가격</span>
+                                                            <span>좋아요 수</span>
+                                                        </div>
+                                                        <div class="right_item_price">
+                                                            <div class="sale_rate">
+                                                                <div>
+                                                                    ${sale_rate}%
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_price">
+                                                                <div>
+                                                                    <div class="before_price">${prime_prices}</div>
+                                                                    <div class="current_price">${sale_prices}</div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="sale_like" onclick="updateLike('${dbId}','${like}')">
+                                                                <div>
+                                                                    <div><i class="fa fa-thumbs-up"></i> </div>
+                                                                    <div>${like}</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>                          
+                                                    </div>
+                                                </div>`
+                        if(loginName !== username){
+                            $('.rank_list').append(temp_html2);
+                        } else {
+                            $('.rank_list').append(temp_html);
                         }
                     }
                 }
@@ -746,3 +1805,4 @@ function getDish() {
         });
     }
 }
+

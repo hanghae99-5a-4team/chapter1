@@ -5,11 +5,17 @@ let dateChange = () => {
     let result = value.split('-')
 };
 
+function moveindex(){
+    window.location.replace("/")
+}
+
 // 게시글 작성
-
-
 function post() {
-    let file = $("#img")[0].files[0]
+    // let id = $("#").val()
+    //img 주소가 fakepath 형식을 들어와서 변환해줌
+    let filePath = $("#img").val()
+    let filePathSplit = filePath.split('\\')
+    let img = filePathSplit[2]
     let brand_name = $("#brand_name").val()
     let food_name = $("#food_name").val()
     let prime_prices = $("#prime_prices").val()
@@ -20,27 +26,24 @@ function post() {
     let comment = $("#comment").val()
     let category = $("#category").val()
 
-    let form_data = new FormData()
-    form_data.append("img_give", file)
-    form_data.append("brand_name_give", brand_name)
-    form_data.append("food_name_give", food_name)
-    form_data.append("prime_prices_give", prime_prices)
-    form_data.append("sale_prices_give", sale_prices)
-    form_data.append("start_date_give", start_date)
-    form_data.append("end_date_give", end_date)
-    form_data.append("know_how_give", know_how)
-    form_data.append("comment_give", comment)
-    form_data.append("category_give", category)
-
     $.ajax({
         type: "POST",
         url: "/post",
-        data: form_data,
-        cache: false,
-        contentType: false,
-        processData: false,
+        data: {
+            img_give: img,
+            brand_name_give: brand_name,
+            food_name_give: food_name,
+            prime_prices_give: prime_prices,
+            sale_prices_give: sale_prices,
+            start_date_give: start_date,
+            end_date_give: end_date,
+            know_how_give: know_how,
+            comment_give: comment,
+            category_give: category
+        },
         success: function (response) {
-            alert(response['msg'])
+            console.log(response["msg"]);
+            alert(response["msg"]);
             window.location.replace("/")
         }
     })
