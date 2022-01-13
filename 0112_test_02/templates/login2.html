@@ -98,12 +98,14 @@
 
     </style>
     <script>
+        //회원가입 함수
         function sign_up() {
             let username = $("#input-username").val()
             let password = $("#input-password").val()
             let password2 = $("#input-password2").val()
             console.log(username, password, password2)
 
+            // 중복버튼 검사 완료 했는지 확인하는 절차
             if ($("#help-id").hasClass("is-danger")) {
                 alert("아이디를 다시 확인해주세요.")
                 return;
@@ -112,6 +114,7 @@
                 return;
             }
 
+            //패스워드에 공백인지 확인 및 제한된 입력을 했는지 검사
             if (password == "") {
                 $("#help-password").text("비밀번호를 입력해주세요.").removeClass("is-safe").addClass("is-danger")
                 $("#input-password").focus()
@@ -135,7 +138,7 @@
                 $("#help-password2").text("비밀번호가 일치합니다.").removeClass("is-danger").addClass("is-success")
             }
 
-
+            // 이메일 입력 값을 받아 공백인지 확인
             let input_email_value1= document.getElementById("email1").value;
             let input_email_value2= document.getElementById("email2").value;
 
@@ -143,20 +146,20 @@
             let email_address_check = email_address.split('@')[1]
             console.log(email_address)
 
-            if (email_address == "@") {
-                alert("이메일을 확인해 주세요")
-                return;
-            }
+            //if (email_address == "@") {
+            //    alert("이메일을 확인해 주세요")
+            //    return;
+            //}
             if (email_address_check == "") {
                 alert("이메일을 확인해 주세요")
                 return;
             }
 
-
+            // 로그인페이지 약관동의 창에서 체크 여부한 값을 받아서 변수에 저장
             let agree_cheeck1 = localStorage.getItem('agree1')
             let agree_cheeck2 = localStorage.getItem('agree2')
             let agree_cheeck3 = localStorage.getItem('agree3')
-
+            // 회원가입 정보를 서버에 전달하여 DB저장
             $.ajax({
 
                 type: "POST",
@@ -177,34 +180,38 @@
 
         }
 
-
+        // 입력한 유저네임이 2~10자로 영문 숫자 및 (._)만 입력 가능하게 제한
         function is_nickname(asValue) {
             var regExp = /^(?=.*[a-zA-Z])[-a-zA-Z0-9_.]{2,10}$/;
             return regExp.test(asValue);
         }
-
+        // 입력한 패스워드가 8~20자로 영문,숫자 및 특수문자(!@#$%^&*)까지 입력 가능하게 제한
         function is_password(asValue) {
             var regExp = /^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z!@#$%^&*]{8,20}$/;
             return regExp.test(asValue);
         }
 
-
+        // 아이디 중복 체크하는 함수
         function check_dup() {
 
             let username = $("#input-username").val()
             console.log(username)
+            // 입력한 유저네임을 받아 공백이면 입력하라고 표현
             if (username == "") {
                 $("#help-id").text("아이디를 입력해주세요.").removeClass("is-safe").addClass("is-danger")
                 $("#input-username").focus()
                 return;
             }
+            // 유저 네임 입력 제한 함수
             if (!is_nickname(username)) {
                 $("#help-id").text("아이디의 형식을 확인해주세요. 영문과 숫자, 일부 특수문자(._-) 사용 가능. 2-10자 길이").removeClass("is-safe").addClass("is-danger")
                 $("#input-username").focus()
                 return;
             }
-
+            // 준비 완료한 것을 확인할 매개체로 클래스 추가함
             $("#help-id").addClass("is-loading")
+
+            //서버 유저네임을 보내 DB에서 중복 유저가 있는지 확인
             $.ajax({
                 type: "POST",
                 url: "/sign_up/check_dup",
@@ -224,6 +231,7 @@
             });
         }
 
+        // 이메일 도메인 클릭 시 값 넣어주는 함수
         function checkemailaddy(){
         if (form.email_select.value == '1') {
             form.email2.readOnly = false;
@@ -248,6 +256,7 @@
     </div>
 
     <div class="hero-body has-text-centered" style="padding-bottom:1rem;margin:auto;">
+        <img src="static/knowhow.png" width="200" height="200" alt="항해 5기 4조">
         <h1 class="title is-sparta">나만의 할인 노하우</h1>
         <h3 class="subtitle is-sparta">Show me the know-how!</h3>
     </div>

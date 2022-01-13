@@ -14,11 +14,12 @@ app.config['UPLOAD_FOLDER'] = "./static/profile_pics"
 
 SECRET_KEY = 'SPARTA'
 
-#client = MongoClient('mongodb://test:test@localhost', 27017)
+# client = MongoClient('mongodb://test:test@localhost', 27017)
 client = MongoClient('localhost', 27017)
 db = client.tema4
 
 # 로그인 후 메인페이지로 가는 함수, 토큰이 없을 시 login 페이지로 보내짐
+
 @app.route('/')
 def home():
     # 로그인 시 보내준 토큰을 확인
@@ -31,71 +32,6 @@ def home():
         return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
     except jwt.exceptions.DecodeError:
         return redirect(url_for("login", msg="로그인 정보가 존재하지 않습니다."))
-
-
-@app.route('/api/reviewWrite', methods=['POST'])
-def reviewWrite():
-    token_receive = request.cookies.get('mytoken')
-    payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-    username = payload["id"];
-    comment = request.form['comment_give']
-    id = request.form['id_give']
-    now = datetime.today().strftime("%Y-%m/%d")
-    doc = {'username':username,'comment':comment,'created':now}
-    print(doc)
-    db.post1.update_one({"_id": ObjectId(id)}, {"$addToSet": {"reviews": doc}})
-    return jsonify({'result': 'success'})
-
-@app.route('/api/get_reviews', methods=['GET'])
-def getReviews():
-    filter_receive = request.args.get('filter_give')
-    id_give = request.args.get('id_give')
-    if filter_receive == '한식':
-        reviews = db.post1.find_one({"_id":ObjectId(id_give)},{'_id':False})
-        return jsonify({'result': 'success','reviews':reviews})
-
-
-@app.route('/api/foodlist', methods=['GET'])
-def getDish():
-    token_receive = request.cookies.get('mytoken')
-    payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-    dish_receive = request.args.get('dish_give')
-    if dish_receive == '한식':
-        koreanfoods = list(db.post1.find({}))
-        for koreanfood in koreanfoods:
-            koreanfood["_id"] = str(koreanfood["_id"])
-        return jsonify({'koreanfoods': koreanfoods,'id':payload["id"]})
-    if dish_receive == '중식':
-        chinafoods = list(db.post2.find({}))
-        for chinafood in chinafoods:
-            chinafood["_id"] = str(chinafood["_id"])
-        return jsonify({'chinafoods': chinafoods, 'id':payload["id"]})
-
-
-@app.route('/api/updatelike', methods=['PATCH'])
-def updateLike():
-    filter_list = request.form['filter_give']
-    id = request.form['id_give']
-    like = request.form['like_give']
-    print(id);
-    if  filter_list == '한식':
-        db.post1.update_one({"_id": ObjectId(id)}, {"$set": {"like": str(int(like)+1)}})
-        return jsonify({'result': 'success'})
-
-    if  filter_list == '중식':
-        db.post2.update_one({"_id":ObjectId(id)}, {"$set": {"like": str(int(like)+1)}})
-        return jsonify({'result': 'success'})
-
-@app.route('/api/deletelank', methods=['POST'])
-def deleteLank():
-    filter_list = request.form['filter_give']
-    id = request.form['id_give']
-    if filter_list =='한식':
-        db.post1.delete_one({'_id':ObjectId(id)})
-        return jsonify({'result': 'success'})
-
-
-
 
 
 # 로그인 페이지로 가는 함수
@@ -172,8 +108,6 @@ def check_dup():
     return jsonify({'result': 'success', 'exists': exists})
 
 
-
-
 @app.route('/post', methods=['POST'])
 def post():
     token_receive = request.cookies.get('mytoken')
@@ -229,6 +163,104 @@ def post():
         return jsonify({'msg': '노하우 등록이 완료되었습니다!'})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("home"))
+
+
+
+@app.route('/api/reviewWrite', methods=['POST'])
+def reviewWrite():
+    token_receive = request.cookies.get('mytoken')
+    payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+    username = payload["id"];
+    comment = request.form['comment_give']
+    id = request.form['id_give']
+    now = datetime.today().strftime("%Y-%m/%d")
+    doc = {'username':username,'comment':comment,'created':now}
+    print(doc)
+    db.post1.update_one({"_id": ObjectId(id)}, {"$addToSet": {"reviews": doc}})
+    return jsonify({'result': 'success'})
+
+@app.route('/api/get_reviews', methods=['GET'])
+def getReviews():
+    filter_receive = request.args.get('filter_give')
+    id_give = request.args.get('id_give')
+    if filter_receive == '한식':
+        reviews = db.post1.find_one({"_id":ObjectId(id_give)},{'_id':False})
+        return jsonify({'result': 'success','reviews':reviews})
+    if filter_receive == '중식':
+        reviews = db.post2.find_one({"_id":ObjectId(id_give)},{'_id':False})
+        return jsonify({'result': 'success','reviews':reviews})
+    if filter_receive == '일식':
+        reviews = db.post3.find_one({"_id":ObjectId(id_give)},{'_id':False})
+        return jsonify({'result': 'success','reviews':reviews})
+    if filter_receive == '양식':
+        reviews = db.post4.find_one({"_id":ObjectId(id_give)},{'_id':False})
+        return jsonify({'result': 'success','reviews':reviews})
+
+
+@app.route('/api/foodlist', methods=['GET'])
+def getDish():
+    token_receive = request.cookies.get('mytoken')
+    payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+    dish_receive = request.args.get('dish_give')
+    if dish_receive == '한식':
+        koreanfoods = list(db.post1.find({}))
+        for koreanfood in koreanfoods:
+            koreanfood["_id"] = str(koreanfood["_id"])
+        return jsonify({'koreanfoods': koreanfoods,'id':payload["id"]})
+    if dish_receive == '중식':
+        chinafoods = list(db.post2.find({}))
+        for chinafood in chinafoods:
+            chinafood["_id"] = str(chinafood["_id"])
+        return jsonify({'chinafoods': chinafoods, 'id':payload["id"]})
+    if dish_receive == '일식':
+        japanfoods = list(db.post3.find({}))
+        for japanfood in japanfoods:
+            japanfood["_id"] = str(japanfood["_id"])
+        return jsonify({'japanfoods': japanfoods, 'id':payload["id"]})
+    if dish_receive == '양식':
+        westernfoods = list(db.post4.find({}))
+        for westernfood in westernfoods:
+            westernfood["_id"] = str(westernfood["_id"])
+        return jsonify({'westernfoods': westernfoods, 'id':payload["id"]})
+
+
+@app.route('/api/updatelike', methods=['PATCH'])
+def updateLike():
+    filter_list = request.form['filter_give']
+    id = request.form['id_give']
+    like = request.form['like_give']
+    print(id);
+    if  filter_list == '한식':
+        db.post1.update_one({"_id": ObjectId(id)}, {"$set": {"like": str(int(like)+1)}})
+        return jsonify({'result': 'success'})
+
+    if  filter_list == '중식':
+        db.post2.update_one({"_id":ObjectId(id)}, {"$set": {"like": str(int(like)+1)}})
+        return jsonify({'result': 'success'})
+
+    if  filter_list == '일식':
+        db.post3.update_one({"_id":ObjectId(id)}, {"$set": {"like": str(int(like)+1)}})
+        return jsonify({'result': 'success'})
+    if  filter_list == '양식':
+        db.post4.update_one({"_id":ObjectId(id)}, {"$set": {"like": str(int(like)+1)}})
+        return jsonify({'result': 'success'})
+
+@app.route('/api/deletelank', methods=['POST'])
+def deleteLank():
+    filter_list = request.form['filter_give']
+    id = request.form['id_give']
+    if filter_list =='한식':
+        db.post1.delete_one({'_id':ObjectId(id)})
+        return jsonify({'result': 'success'})
+    if filter_list =='중식':
+        db.post2.delete_one({'_id':ObjectId(id)})
+        return jsonify({'result': 'success'})
+    if filter_list =='일식':
+        db.post3.delete_one({'_id':ObjectId(id)})
+        return jsonify({'result': 'success'})
+    if filter_list =='양식':
+        db.post4.delete_one({'_id':ObjectId(id)})
+        return jsonify({'result': 'success'})
 
 
 if __name__ == '__main__':
