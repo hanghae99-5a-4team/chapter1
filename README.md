@@ -14,7 +14,7 @@
 
 ## 🎬 시연영상
 
-![시연영상](https://youtu.be/CONNv4jAvXM)
+![시연영상]<iframe width="1280" height="720" src="https://www.youtube.com/embed/CONNv4jAvXM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 <br/>
 <br/>
