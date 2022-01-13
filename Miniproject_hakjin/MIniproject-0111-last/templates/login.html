@@ -91,8 +91,7 @@
             padding:30px;
         }
         body {
-            {#background-color: rgb(143,188,143);#}
-            background: url("https://previews.123rf.com/images/houbacze/houbacze1607/houbacze160700156/59666889-%EB%B9%A8%EA%B0%84%EC%83%89-%EB%B2%A1%ED%84%B0-%ED%8F%89%EB%A9%B4-%EB%B2%A1%ED%84%B0-%EB%B0%B0%EA%B2%BD%EC%9D%B4-%EB%B0%A9%EB%B2%95%EC%9D%84-%EC%95%8C%EA%B3%A0-%EB%B0%A9%EB%B2%95-%EB%85%B8%ED%95%98%EC%9A%B0-%EB%85%B8%ED%95%98%EC%9A%B0-%EC%95%8C%EA%B3%A0.jpg") no-repeat center;
+            background-color: RGBA(232, 52, 78, 0.2);
             min-height: 100vh;
         }
 
@@ -115,7 +114,7 @@
         }
 
         .is-sparta {
-            color: #FFD228 !important;
+            color: #e8344e !important;
         }
 
         .button.is-sparta {
@@ -133,14 +132,15 @@
         .help {
             color: gray;
         }
-
     </style>
     <script>
-        //로그인 버튼 누를 시 작동 함수
+        // {% if msg %}
+        //     alert("{{ msg }}")
+        // {% endif %}
         function sign_in() {
             let username = $("#input-username").val()
             let password = $("#input-password").val()
-            //유저 네임이 공란일 시에 아이디 입력해달라는 문구를 표현
+
             if (username == "") {
                 $("#help-id-login").text("아이디를 입력해주세요.")
                 $("#input-username").focus()
@@ -148,7 +148,7 @@
             } else {
                 $("#help-id-login").text("")
             }
-            //패스워드가 공란일 시에 패스워드 입력해달라는 문구를 표현
+
             if (password == "") {
                 $("#help-password-login").text("비밀번호를 입력해주세요.")
                 $("#input-password").focus()
@@ -156,8 +156,6 @@
             } else {
                 $("#help-password-login").text("")
             }
-
-            //ajax 기능을 통해 유저네임과 패스워드를 서버에 전달하여 성공 시 서버가 주는 토큰 값을 받음
             $.ajax({
                 type: "POST",
                 url: "/sign_in",
@@ -168,15 +166,13 @@
                 success: function (response) {
                     if (response['result'] == 'success') {
                         $.cookie('mytoken', response['token'], {path: '/'});
-                        // 토큰 받은 후 메인페이지로 가게됌됌
-                       window.location.replace("/")
+                        window.location.replace("/")
                     } else {
                         alert(response['msg'])
                     }
                 }
             });
         }
-        //약관동의 전체 체크박스 클릭 시 체크박스 전부 체크되는 함수
         function selectAll(selectAll) {
             const checkboxes
                 = document.getElementsByName('agree_button');
@@ -186,17 +182,16 @@
             })
         }
 
-        // 체크 박스 체크 값을 받아 저장하는 함수->회원가입 페이지에서 이 값을 받아 회원가입 시 같이 db 저장하기위함
         function check_button_check() {
             agree_cheeck1 = $("input:checkbox[id='agree_1']").is(":checked")
             agree_cheeck2 = $("input:checkbox[id='agree_2']").is(":checked")
             agree_cheeck3 = $("input:checkbox[id='agree_3']").is(":checked")
 
-            // console.log(agree_cheeck1,agree_cheeck2)
+
+            /*console.log(agree_cheeck1,agree_cheeck2)*/
 
             if (agree_cheeck1 == true && agree_cheeck2 == true) {
 
-                // 체크 박스 체크 값을 agree1,agree2,agree3이라는 키에 true, false 값을 담음, 회원가입 페이지에서 부를 예정
                 if (agree_cheeck3 == true){
                     localStorage.setItem('agree1','true');
                     localStorage.setItem('agree2','true');
@@ -207,9 +202,9 @@
                     localStorage.setItem('agree2','true');
                     localStorage.setItem('agree3','false');
                 }
-                // 회원가입 페이지로 이동
+
                 window.location.href = '/login2'
-            // 필수 버튼이 2개 안눌렸을 경우 체크 알람 띄움
+
             } else {
                 alert("필수 버튼을 체크해주시기 바랍니다.")
             }
@@ -217,17 +212,14 @@
 
     </script>
 </head>
-
 <body>
-{#페이지 상단 배너#}
+
 <section class="hero is-white">
     <div class="hero-body has-text-centered" style="padding-bottom:1rem;margin:auto;">
-        <h1 class="title is-sparta">나만의 할인 노하우</h1>
-        <h3 class="subtitle is-sparta">Show me the know-how!</h3>
+        <h1 class="title is-sparta">4조</h1>
+        <h3 class="subtitle is-sparta">미니프로젝트</h3>
     </div>
 </section>
-
-{#로그인 박스#}
 <section class="section">
     <div class="container">
         <div class="box" style="max-width: 480px;margin:auto">
@@ -247,19 +239,24 @@
                                 <input id="input-password" class="input" type="password" placeholder="비밀번호">
                                 <span class="icon is-small is-left"><i class="fa fa-lock"></i></span>
                             </div>
+                            <p id="help-password" class="help is-hidden">영문과 숫자 조합의 8-20자의 비밀번호를 설정해주세요. 특수문자(!@#$%^&*)도
+                                사용
+                                가능합니다.</p>
                         </div>
 
 
                     </div>
                     <div id="div-sign-in-or-up" class="has-text-centered">
-                        <nav class="level is-mobile" id="login_button">
-                            <button class="level-item button is-sparta " onclick="sign_in()">로그인</button>
+                        <nav class="level is-mobile">
+                            <button class="level-item button is-sparta" onclick="sign_in()">
+                                로그인
+                            </button>
 
                         </nav>
                         <hr>
                         <h4 class="mb-3">아직 회원이 아니라면</h4>
                         <nav class="level is-mobile">
-                            {#회원가입 버튼, 누를시 id="box_property 를 찾아 is-active 클래스를 추가함#}
+
                             <button class="level-item button is-sparta is-outlined"
                                     onclick='$("#box_property").addClass("is-active")'>회원가입하기
                             </button>
@@ -272,7 +269,8 @@
     </div>
 </section>
 
-{#약관 동의 박스, class로 modal을 넣어서 기본 숨김으로 하고 회원가입 버튼 누를 시 is-active 클래스가 붙어서 활성화 됌 #}
+
+
 <div class="box modal" id="box_property" >
     <form class="agree" >
         <div class="step_wrap">
@@ -308,13 +306,14 @@
         </div>
     </form>
     <div>
-        {#회원가입 버튼, 누를시 필수체크 확인하는 함수 호출하여 문제 없을 시 회원가입 페이지로 넘어감#}
         <button class="move_join" type="submit" onclick="check_button_check()">회원가입 이동</button>
-        {#취소 버튼, 누를시 id="box_property 를 찾아 is-active를 지워서 modal 기능으로 인해 약관동의 숨겨짐#}
         <button class="move_join2" type="submit" onclick='$("#box_property").removeClass("is-active")'>취소</button>
     </div>
 
 </div>
+
+
+
 
 </body>
 </html>
