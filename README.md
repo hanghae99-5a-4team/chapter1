@@ -1,4 +1,4 @@
-# A반 4조 (mini project 1)
+# A반 4조 Mini project 1 | 나만의 할인 노하우
 
 ## 프로젝트 소개 🍚
 
@@ -13,6 +13,8 @@
 <br/>
 
 ## 🎬 시연영상
+
+![시연영상](https://youtu.be/CONNv4jAvXM)
 
 <br/>
 <br/>
